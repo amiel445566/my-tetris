@@ -1,0 +1,118 @@
+// Tetris pseudocode
+
+// game information architecture (structure)
+define Menu{
+	input(Play) {
+	}
+	
+	input(Options) {
+	}
+	
+	input(Help) {
+	}
+}
+
+// macro logic (the game board)
+boardsize = {10, 24}
+	// score contains child functions that are called when their completion is detected
+if (reset == true){
+	score = 0;
+	timingincrease = 0;
+		// nextpieces only displays the first 2 elements, the 3rd is so no tick display issues occur w/ RNG
+	nextpieces = {0, 0, 0}; // key: (0, empty), (1, ::), (2, :..), (3, ..:), (4, .:·), (5, ·:.), (6, .:.)
+}
+define score{
+	define scoremodifier {
+	scoremodifier = timingincrease + scoreboost + 1 // add 1 because no increase produces a base score modifiction
+	}
+	define linecompleted{
+	score += scoremodifier * ((line.completed.amount ^2) * 100);
+	}
+		// placing gives double the amount that standard downward movement does; movement is only called if a block is placed or sped up
+	define movement{
+		if (piece.place == true){
+			score += scoremodifier * (piece.moveddownamout * 2); // if the piece is placed, then a x2 speed boost score is given for every grid space skipped
+		}
+		else {
+			score += scoremodifier;
+		}
+	}
+}
+define timing{
+	if (play.mode == 0){
+	timingmodifier = .1;
+	}
+	else if (play.mode == 1){
+	timingmodifier = .2;
+	}
+	else {
+	timingmodifier = .4;
+	}
+		// every 10 lines completed, the speed increases by timingmodifier
+	define increase{
+	timingincrease = floor(linescompleted / 10) * timingmodifier;
+	}
+}
+
+// micro logic (the modules)
+define block {
+	define movement {
+	movement_inputs = {right, down, left, place};
+	movement_inputs_x = {right, left};
+	movement_inputs_y = {down, place};
+	define input_calculation {
+		if (input == place){
+			return block.space_under;
+		}
+		else if (input_held >= 0.5s){
+			input.repeat(0.25s);
+		}
+		else if (input_held < (0.5s)) {
+			input.pulse(1);
+		}
+		else {
+			throw error.input_type;
+		}
+	}
+	if (input in movement_inputs and !block.atborder){
+		x_position += input.input_calculation;
+		y_position += input.input_calculation;
+	}
+	}
+
+	define rotation {
+	rotation_inputs = {rotate_l, rotate_r};
+	if (input in rotation_inputs){
+		try {
+		rotate.input;
+		}
+		except {
+		rotate.blocked;
+		}
+	}
+	else {
+		throw error.rotate;
+	}
+	}
+
+	define hold {
+	if (held.currentround == false and input.hold == true){
+		transpose(currentblock, nextpieces[0]);
+		reset.round; // places block at the top again
+	}
+	else if (held.currentround == true and input.hold == true){
+		trigger alarm.already_held;
+	}
+	else {
+		throw error.false_hold_trigger;
+	}
+	}
+		
+		// used to break up blocks after placement 
+	define release {
+		currentblock.blockinput;
+		currentblock.explode;
+	}
+}
+
+

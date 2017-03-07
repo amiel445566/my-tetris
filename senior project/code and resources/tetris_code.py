@@ -1,3 +1,11 @@
+'''
+TO DO:
+- Set up a basic move function; don't worry about timings yet
+- Set up a array merge function for set pieces (dont translate 0's)
+- Learn about importing time and it's functions
+'''
+
+
 # import statements
 '''from pygame import *''' # reinstall pygame to reenable function
 from sys import *

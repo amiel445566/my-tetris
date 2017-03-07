@@ -11,7 +11,6 @@ TO DO:
 from sys import *
 
 # global variables
-map_size = (10, 24)
 map_space = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

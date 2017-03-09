@@ -9,9 +9,10 @@ TO DO:
 # import statements
 '''from pygame import *''' # reinstall pygame to reenable function
 from sys import *
+from copy import *
 
 # global variables
-map_space = [
+empty_map = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -38,8 +39,27 @@ map_space = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ]
 
-map_space_movement_temp = map_space[:]
-''' map_space_movement_temp differs from map_space because it is used as
+# initialize maps
+placement_map = deepcopy(empty_map)
+movement_map = deepcopy(empty_map)
+
+def reset_map(map_name):
+    """ resets the specified map:
+    - placement_map
+    - movement_map
+    - all """
+    if map_name == "placement_map" or map_name == "all":
+        global placement_map
+        placement_map = deepcopy(empty_map)
+        print("placement_map reset")
+    if map_name == "movement_map" or map_name == "all":
+        global movement_map
+        movement_map = deepcopy(empty_map)
+        print("movement_map reset")
+    else:
+        print("map_name: '" + str(map_name) + "' unrecognized")
+
+''' movement_map differs from placement_map because it is used as
 an overlay to the default map space such that there aren't any issues
 with memory and piece locations as well as having the 0's in the piece
 array overwrite used space '''
@@ -66,6 +86,9 @@ pieces = [
      [0, 0, 0, 7]]
     ]
 
+# stores indecies of piece on map; changes every transformation
+current_piece_coordinates = []
+
 # piece modification functions
 def rotate_clockwise(piece):
     new_piece = [] # placeholder for the new piece state
@@ -84,3 +107,13 @@ def rotate_counterclockwise(piece): # *see clockwise notes*
             temp_list.append(piece[j][i])
         new_piece.append(temp_list)
     return new_piece
+
+def place_piece(piece, map_index_list):
+    """ places piece at movement_map[map_index_list] where
+    map_index_list = (24-y, 10-x) """
+    for i in range(len(piece)):
+        for j in range(len(piece[i])):
+            movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
+    for i in movement_map:
+        print(i)
+            

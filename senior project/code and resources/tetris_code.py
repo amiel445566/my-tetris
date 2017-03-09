@@ -1,10 +1,12 @@
+########################################################################################
 '''
 TO DO:
-- Set up a basic move function; don't worry about timings yet
-- Set up a array merge function for set pieces (dont translate 0's)
-- Learn about importing time and it's functions
+- learn about importing time and it's functions
+    > coordinate time with the visuals so render time doesnt add to cycle time
+- set up conditions for setting pieces down (copy from movement_map to placement_map)
+    > *don't forget to not include 0's in the copying process*
 '''
-
+########################################################################################
 
 # import statements
 '''from pygame import *''' # reinstall pygame to reenable function

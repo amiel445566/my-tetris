@@ -1,10 +1,23 @@
 ########################################################################################
 '''
 TO DO:
+note:   (these are some things that need to be completed next/soon)
+
 - learn about importing time and it's functions
     > coordinate time with the visuals so render time doesnt add to cycle time
 - set up conditions for setting pieces down (copy from movement_map to placement_map)
     > *don't forget to not include 0's in the copying process*
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FINAL TO DO's:
+note:   (list MAY be incomplete)
+        (some elements MAY be completed before the final product)
+
+- remove debug tools
+- remove ASCII map prints
+- create a game loop (*reference the game state machine*)
+- turn into an EXE
 '''
 ########################################################################################
 

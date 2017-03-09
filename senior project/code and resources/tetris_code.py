@@ -56,7 +56,7 @@ def reset_map(map_name):
         global movement_map
         global movement_piece_location
         movement_map = deepcopy(empty_map)
-        movement_piece_location = [] # because the piece gets removed, so should its location
+        movement_piece_location = () # because the piece gets removed, so should its location
         print("movement_map reset") # FOR DEBUG, REMOVE LATER
     else: # FOR DEBUG, REMOVE LATER
         print("map_name: '" + str(map_name) + "' unrecognized")
@@ -89,7 +89,7 @@ pieces = [
     ]
 
 # initialize; stores indecies of piece on map; changes every transformation
-movement_piece_location = []
+movement_piece_location = ()
 
 # piece modification functions
 def rotate_clockwise(piece):
@@ -132,3 +132,7 @@ def place_piece(piece, map_index_list):
         print(i)
     else:
         return None # PLACE CODE FOR FAILURE HERE
+# BECAUSE YOU TEND TO FORGET THINGS (YOU IDIOT), HERES A DEMO FOR DOWNWARD MOVEMENT
+#for i in range(7):
+#    reset_map("movement_map")
+#   place_piece(pieces[0], (2+i, 3))

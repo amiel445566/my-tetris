@@ -111,9 +111,18 @@ def rotate_counterclockwise(piece): # *see clockwise notes*
 def place_piece(piece, map_index_list):
     """ places piece at movement_map[map_index_list] where
     map_index_list = (24-y, 10-x) """
-    for i in range(len(piece)):
+    placement_clear = True # allows placement to begin if map underneath is clear
+    for i in range(len(piece)): # first test if the map underneath is clear
         for j in range(len(piece[i])):
-            movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
-    for i in movement_map:
-        print(i)
-            
+            if placement_map[map_index_list[0] + i][map_index_list[1] + j] != 0 and piece[i][j] != 0:
+                placement_clear = False
+                print("placement blocked at location: (" + # DEBUG FOR BLOCKED PLACEMENT; REMOVE LATER
+                      str(map_index_list[1] + j + 1) +
+                      ", " + str(24 - (map_index_list[0] + i)) +
+                      ")")
+    if placement_clear:
+        for i in range(len(piece)): # place piece in predetermined spot
+            for j in range(len(piece[i])):
+                movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
+    else:
+        return None # PLACE CODE FOR FAILURE HERE

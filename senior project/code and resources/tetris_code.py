@@ -51,12 +51,14 @@ def reset_map(map_name):
     if map_name == "placement_map" or map_name == "all":
         global placement_map
         placement_map = deepcopy(empty_map)
-        print("placement_map reset")
+        print("placement_map reset") # FOR DEBUG, REMOVE LATER
     if map_name == "movement_map" or map_name == "all":
         global movement_map
+        global movement_piece_location
         movement_map = deepcopy(empty_map)
-        print("movement_map reset")
-    else:
+        movement_piece_location = [] # because the piece gets removed, so should its location
+        print("movement_map reset") # FOR DEBUG, REMOVE LATER
+    else: # FOR DEBUG, REMOVE LATER
         print("map_name: '" + str(map_name) + "' unrecognized")
 
 ''' movement_map differs from placement_map because it is used as
@@ -86,8 +88,8 @@ pieces = [
      [0, 0, 0, 7]]
     ]
 
-# stores indecies of piece on map; changes every transformation
-current_piece_coordinates = []
+# initialize; stores indecies of piece on map; changes every transformation
+movement_piece_location = []
 
 # piece modification functions
 def rotate_clockwise(piece):
@@ -111,12 +113,14 @@ def rotate_counterclockwise(piece): # *see clockwise notes*
 def place_piece(piece, map_index_list):
     """ places piece at movement_map[map_index_list] where
     map_index_list = (24-y, 10-x) """
+    global movement_piece_location
+    movement_piece_location = deepcopy(map_index_list)
     placement_clear = True # allows placement to begin if map underneath is clear
     for i in range(len(piece)): # first test if the map underneath is clear
         for j in range(len(piece[i])):
             if placement_map[map_index_list[0] + i][map_index_list[1] + j] != 0 and piece[i][j] != 0:
                 placement_clear = False
-                print("placement blocked at location: (" + # DEBUG FOR BLOCKED PLACEMENT; REMOVE LATER
+                print("placement blocked at location: (" + # FOR DEBUG, REMOVE LATER
                       str(map_index_list[1] + j + 1) +
                       ", " + str(24 - (map_index_list[0] + i)) +
                       ")")
@@ -124,5 +128,7 @@ def place_piece(piece, map_index_list):
         for i in range(len(piece)): # place piece in predetermined spot
             for j in range(len(piece[i])):
                 movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
+    for i in movement_map: # FOR DEBUG, REMOVE LATER
+        print(i)
     else:
         return None # PLACE CODE FOR FAILURE HERE

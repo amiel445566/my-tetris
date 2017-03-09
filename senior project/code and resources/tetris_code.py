@@ -106,6 +106,10 @@ pieces = [
 # initialize; stores indecies of piece on map; changes every transformation
 movement_piece_location = ()
 
+# map testing functions
+def index_is_clear(map_index_list):
+    """ tests the placement map at the given index to see if it is clear (a 0)  """
+
 # piece modification functions
 def rotate_clockwise(piece):
     new_piece = [] # placeholder for the new piece state

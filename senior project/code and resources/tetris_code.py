@@ -25,6 +25,7 @@ note:   (list MAY be incomplete)
 '''from pygame import *''' # reinstall pygame to reenable function
 from sys import *
 from copy import *
+from random import *
 
 # global variables
 empty_map = [
@@ -105,6 +106,8 @@ pieces = [
 
 # initialize; stores indecies of piece on map; changes every transformation
 movement_piece_location = ()
+current_piece = () # when setting use = deepcopy(piece[n])
+next_pieces = [] # when setting, generate random values between 0 and 6 and generate 3 pieces with append
 
 # map testing functions
 def index_is_clear(map_index_list):
@@ -152,6 +155,9 @@ def place_piece(piece, map_index_list):
     else:
         return None # PLACE CODE FOR FAILURE HERE
 # BECAUSE YOU TEND TO FORGET THINGS (YOU IDIOT), HERES A DEMO FOR DOWNWARD MOVEMENT
+#current_piece = deepcopy(pieces[0])
 #for i in range(7):
+#    if i == 3:
+#        current_piece = rotate_clockwise(current_piece)
 #    reset_map("movement_map")
-#    place_piece(pieces[0], (2+i, 3))
+#    place_piece(current_piece, (2+i, 3))

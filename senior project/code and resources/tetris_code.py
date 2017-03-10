@@ -154,4 +154,4 @@ def place_piece(piece, map_index_list):
 # BECAUSE YOU TEND TO FORGET THINGS (YOU IDIOT), HERES A DEMO FOR DOWNWARD MOVEMENT
 #for i in range(7):
 #    reset_map("movement_map")
-#   place_piece(pieces[0], (2+i, 3))
+#    place_piece(pieces[0], (2+i, 3))

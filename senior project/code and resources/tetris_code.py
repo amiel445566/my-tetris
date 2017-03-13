@@ -167,12 +167,12 @@ def test_rows_filled():
             rows_filled.append(i)
     return rows_filled
 
-def test_rows_nonzero():
+def test_rows_nonzero(): # this function is used to minimize loops in row removal process
     """ cycles through all rows in placement_map and returns
     a list of all row indecies that aren't all zero values """
     rows_nonzero = []
     for i in range(len(placement_map)):
-        if len(set(placement_map[i])) > 1 and 0 in placement_map[i]:
+        if len(set(placement_map[i])) > 1 and 0 in placement_map[i]: # all nonzero lists without filled duplicates
             rows_nonzero.append(i)
     return rows_nonzero
 
@@ -180,27 +180,26 @@ def shift_row_down(row_index):
     """ takes the given row index and shifts the row down
     by one index in placement_map"""
     placement_map[row_index + 1] = placement_map[row_index]
-    placement_map[row_index] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    placement_map[row_index] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # empty current list to avoid copy error
 
 def remove_filled_rows():
     """ removes filled rows and shifts the remaining
     blocks above, down """
     rows_filled = test_rows_filled()
     rows_nonzero = test_rows_nonzero()
-    for i in range(len(test_rows_filled())):
+    for i in range(len(test_rows_filled())): # empty filled rows
         placement_map[rows_filled[i]] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     if len(test_rows_nonzero()) > 0:
-        rows_filled = rows_filled[::-1]
+        rows_filled = rows_filled[::-1] # start from the top because top rows move down more; avoids stack count
         row_removed_count = 0
-        while len(rows_filled) > 0:
-            for i in rows_nonzero:
+        while len(rows_filled) > 0: # loop for each row deletion (higher nonzero rows stack movements)
+            for i in rows_nonzero: # non-reversed as to not override lower nonzero rows; rely on rows_filled[::-1]
                 if i < rows_filled[0]:
-                    shift_row_down(i + row_removed_count)
+                    shift_row_down(i + row_removed_count) # adjust for downward shifts to the row index
                 else:
                     break
-            print("row_removed_count is now at: " + str(row_removed_count))
             row_removed_count += 1
-            del rows_filled[0]
+            del rows_filled[0] # loop to lower rows and restart process until rows_filled empties
             
             
 

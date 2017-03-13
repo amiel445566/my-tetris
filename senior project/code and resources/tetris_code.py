@@ -1,15 +1,16 @@
 ########################################################################################
 '''
 IMMEDIATE TO DO's
-- Set up current piece value and next pieces list (3 values; 2 displayed)
+- Set up scoring variables (see the outline for details)
+- 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SOON TO DO's:
-- set up conditions for setting pieces down (copy from movement_map to placement_map)
-    > *don't forget to not include 0's in the copying process*
 - learn about importing time and it's functions
     > coordinate time with the visuals so render time doesnt add to cycle time
+- set up conditions for setting pieces down (copy from movement_map to placement_map)
+    > *don't forget to not include 0's in the copying process*
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -154,7 +155,7 @@ def place_piece(piece, map_index_list):
             for j in range(len(piece[i])):
                 movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
     else:
-        return None # PLACE CODE FOR FAILURE HERE
+        return None # PLACE CODE FOR FAILURE HERE, EG place piece if the main loop is blocked when placing below
     for i in movement_map: # FOR DEBUG, REMOVE LATER
         print(i)
 

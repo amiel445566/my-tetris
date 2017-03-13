@@ -200,8 +200,13 @@ def remove_filled_rows():
                     break
             row_removed_count += 1
             del rows_filled[0] # loop to lower rows and restart process until rows_filled empties
-            
-            
+
+def piece_generation():
+    """ generates and updates the variable that holds
+    the next pieces """
+    global next_pieces # access the global variable
+    while len(next_pieces) < 3: # check length and update accordingly
+        next_pieces.append(pieces[randint(0, 6)])
 
 # BECAUSE YOU TEND TO FORGET THINGS (YOU IDIOT), HERES A DEMO FOR DOWNWARD MOVEMENT
 #current_piece = deepcopy(pieces[0])

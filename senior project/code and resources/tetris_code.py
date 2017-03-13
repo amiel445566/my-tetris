@@ -1,8 +1,6 @@
 ########################################################################################
 '''
 IMMEDIATE TO DO's
-- Set up testing for row completion
-- Set up row deletion and all above downward shift
 - Set up current piece value and next pieces list (3 values; 2 displayed)
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -82,10 +80,10 @@ def reset_map(map_name):
     else: # FOR DEBUG, REMOVE LATER
         print("map_name: '" + str(map_name) + "' unrecognized")
 
-''' movement_map differs from placement_map because it is used as
+""" movement_map differs from placement_map because it is used as
 an overlay to the default map space such that there aren't any issues
 with memory and piece locations as well as having the 0's in the piece
-array overwrite used space '''
+array overwrite used space """
 
 pieces = [
     [[1, 1, 0],
@@ -155,10 +153,57 @@ def place_piece(piece, map_index_list):
         for i in range(len(piece)): # place piece in predetermined spot
             for j in range(len(piece[i])):
                 movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
-    for i in movement_map: # FOR DEBUG, REMOVE LATER
-        print(i)
     else:
         return None # PLACE CODE FOR FAILURE HERE
+    for i in movement_map: # FOR DEBUG, REMOVE LATER
+        print(i)
+
+def test_rows_filled():
+    """ cycles through all rows in placement_map and returns
+    a list of all row indecies that are filled """
+    rows_filled = []
+    for i in range(len(placement_map)):
+        if 0 not in placement_map[i]:
+            rows_filled.append(i)
+    return rows_filled
+
+def test_rows_nonzero():
+    """ cycles through all rows in placement_map and returns
+    a list of all row indecies that aren't all zero values """
+    rows_nonzero = []
+    for i in range(len(placement_map)):
+        if len(set(placement_map[i])) > 1 and 0 in placement_map[i]:
+            rows_nonzero.append(i)
+    return rows_nonzero
+
+def shift_row_down(row_index):
+    """ takes the given row index and shifts the row down
+    by one index in placement_map"""
+    placement_map[row_index + 1] = placement_map[row_index]
+    placement_map[row_index] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+def remove_filled_rows():
+    """ removes filled rows and shifts the remaining
+    blocks above, down """
+    rows_filled = test_rows_filled()
+    rows_nonzero = test_rows_nonzero()
+    for i in range(len(test_rows_filled())):
+        placement_map[rows_filled[i]] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    if len(test_rows_nonzero()) > 0:
+        rows_filled = rows_filled[::-1]
+        row_removed_count = 0
+        while len(rows_filled) > 0:
+            for i in rows_nonzero:
+                if i < rows_filled[0]:
+                    shift_row_down(i + row_removed_count)
+                else:
+                    break
+            print("row_removed_count is now at: " + str(row_removed_count))
+            row_removed_count += 1
+            del rows_filled[0]
+            
+            
+
 # BECAUSE YOU TEND TO FORGET THINGS (YOU IDIOT), HERES A DEMO FOR DOWNWARD MOVEMENT
 #current_piece = deepcopy(pieces[0])
 #for i in range(7):

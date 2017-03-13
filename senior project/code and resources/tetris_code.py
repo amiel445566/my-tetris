@@ -1,12 +1,17 @@
 ########################################################################################
 '''
-TO DO:
-note:   (these are some things that need to be completed next/soon)
+IMMEDIATE TO DO's
+- Set up testing for row completion
+- Set up row deletion and all above downward shift
+- Set up current piece value and next pieces list (3 values; 2 displayed)
 
-- learn about importing time and it's functions
-    > coordinate time with the visuals so render time doesnt add to cycle time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+SOON TO DO's:
 - set up conditions for setting pieces down (copy from movement_map to placement_map)
     > *don't forget to not include 0's in the copying process*
+- learn about importing time and it's functions
+    > coordinate time with the visuals so render time doesnt add to cycle time
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

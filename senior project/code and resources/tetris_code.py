@@ -114,10 +114,6 @@ next_pieces = [] # when setting, generate random values between 0 and 6 and gene
 timing_increase = 1.0 # used to increase game speed over time (after n lines completed or something)
 score = 0 # score added by scattered functions throughout (see the outline)
 
-# map testing functions
-def index_is_clear(map_index_list):
-    """ tests the placement map at the given index to see if it is clear (a 0)  """
-
 # piece modification functions
 def rotate_clockwise(piece):
     new_piece = [] # placeholder for the new piece state

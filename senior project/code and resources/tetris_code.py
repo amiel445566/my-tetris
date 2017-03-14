@@ -31,7 +31,7 @@ from sys import *
 from copy import *
 from random import *
 
-# global variables
+# GLOBAL VARIABLES
 empty_map = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -86,6 +86,7 @@ an overlay to the default map space such that there aren't any issues
 with memory and piece locations as well as having the 0's in the piece
 array overwrite used space """
 
+# VARIABLES
 pieces = [
     [[1, 1, 0],
      [0, 1, 1]],
@@ -108,10 +109,11 @@ pieces = [
      [0, 0, 0, 7]]
     ]
 
-# initialize; stores indecies of piece on map; changes every transformation
-movement_piece_location = ()
+movement_piece_location = ()# initialize; stores indecies of piece on map; changes every transformation
 current_piece = () # when setting use = deepcopy(piece[n])
 next_pieces = [] # when setting, generate random values between 0 and 6 and generate 3 pieces with append
+timing_increase = 1.0 # used to increase game speed over time (after n lines completed or something)
+score = 0 # score added by scattered functions throughout (see the outline)
 
 # map testing functions
 def index_is_clear(map_index_list):
@@ -201,6 +203,7 @@ def remove_filled_rows():
                     break
             row_removed_count += 1
             del rows_filled[0] # loop to lower rows and restart process until rows_filled empties
+    score += (len(rows_filled) ** 2) * 10 * timing_increase # score += 10t(n^2), t = timing, n = rows
 
 def piece_generation():
     """ generates and updates the variable that holds

@@ -148,6 +148,25 @@ def shift_row_down(row_index):
     placement_map[row_index + 1] = placement_map[row_index]
     placement_map[row_index] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # empty current list to avoid copy error
 
+def move_current_piece(left=False, down=False, right=False, rotate_clockwise=False, rotate_counterclockwise=False):
+    """ takes a boolean directonal input and moves the piece
+    one unit in that direction """
+
+    global movement_piece_location
+    global current_piece
+    
+    # first, deal with duplicate and opposite directions
+    if left and right:
+        return None
+    elif rotate_clockwise and rotate_counterclockwise:
+        return None
+    
+    # second, clear the map
+    reset_map("placement_map")
+
+    # third, apply the translation FINISH THIS NEXT TIME*******************************************
+    
+
 ##############################################################################################
 #################################### TESTS ###################################################
 def test_rows_filled():
@@ -242,3 +261,6 @@ def reset_variable(var_name="all"):
         print("reset score") # FOR DEBUG, REMOVE LATER
     if value_reset == False: # FOR DEBUG, REMOVE LATER
         print("var_name: '" + str(var_name) + "' unrecognized")
+
+##############################################################################################
+##############################################################################################

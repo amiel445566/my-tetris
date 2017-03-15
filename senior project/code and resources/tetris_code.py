@@ -1,14 +1,13 @@
 ########################################################################################
 '''
 IMMEDIATE TO DO's
-- Set up main loop (create empty functions for missing pieces)
-- 
+- set up main loop (create empty functions for missing pieces)
+- print a series of lines with pygame timing every second or so (to learn timing)
+- in the main loop structure, add timing_increase to all applicable states\
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SOON TO DO's:
-- learn about importing time and it's functions
-    > coordinate time with the visuals so render time doesnt add to cycle time
 - set up conditions for setting pieces down (copy from movement_map to placement_map)
     > *don't forget to not include 0's in the copying process*
 
@@ -207,11 +206,3 @@ def piece_generation():
     global next_pieces # access the global variable
     while len(next_pieces) < 3: # check length and update accordingly
         next_pieces.append(pieces[randint(0, 6)])
-
-# BECAUSE YOU TEND TO FORGET THINGS (YOU IDIOT), HERES A DEMO FOR DOWNWARD MOVEMENT
-#current_piece = deepcopy(pieces[0])
-#for i in range(7):
-#    if i == 3:
-#        current_piece = rotate_clockwise(current_piece)
-#    reset_map("movement_map")
-#    place_piece(current_piece, (2+i, 3))

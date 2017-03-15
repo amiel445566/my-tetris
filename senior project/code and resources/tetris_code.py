@@ -1,6 +1,7 @@
 ########################################################################################
 '''
 IMMEDIATE TO DO's
+- simplify movement
 - set up main loop (create empty functions for missing pieces)
 - print a series of lines with pygame timing every second or so (to learn timing)
 - in the main loop structure, add timing_increase to all applicable states
@@ -97,7 +98,7 @@ timing_increase = 1.0 # used to increase game speed over time (after n lines com
 score = 0 # score added by scattered functions throughout (see the outline)
 
 ##############################################################################################
-######################################## TRANSLATIONS ########################################
+##################################### PIECE MODIFICATION #####################################
 def rotate_clockwise(piece):
     new_piece = [] # placeholder for the new piece state
     for i in list(range(len(piece[0]))):
@@ -116,6 +117,8 @@ def rotate_counterclockwise(piece): # *see clockwise notes*
         new_piece.append(temp_list)
     return new_piece
 
+##############################################################################################
+######################################## TRANSLATIONS ########################################
 def place_piece(piece, map_index_list):
     """ places piece at movement_map[map_index_list] where
     map_index_list = (24-y, 10-x) """
@@ -167,22 +170,23 @@ def test_rows_nonzero(): # this function is used to minimize loops in row remova
 
 ##############################################################################################
 ############################## GLOBAL MODIFICATION ###########################################
-def reset_map(map_name):
+def reset_map(map_name="all"):
     """ resets the specified map:
     - placement_map
     - movement_map
     - all """
+    value_reset = False
     if map_name == "placement_map" or map_name == "all":
         global placement_map
         placement_map = deepcopy(empty_map)
-        print("placement_map reset") # FOR DEBUG, REMOVE LATER
+        value_reset = True
+        print("reset placement_map") # FOR DEBUG, REMOVE LATER
     if map_name == "movement_map" or map_name == "all":
         global movement_map
-        global movement_piece_location
         movement_map = deepcopy(empty_map)
-        movement_piece_location = () # because the piece gets removed, so should its location
-        print("movement_map reset") # FOR DEBUG, REMOVE LATER
-    else: # FOR DEBUG, REMOVE LATER
+        value_reset = True
+        print("reset movement_map") # FOR DEBUG, REMOVE LATER
+    if value_reset == False: # FOR DEBUG, REMOVE LATER
         print("map_name: '" + str(map_name) + "' unrecognized")
 
 def remove_filled_rows():
@@ -211,3 +215,30 @@ def piece_generation():
     global next_pieces # access the global variable
     while len(next_pieces) < 3: # check length and update accordingly
         next_pieces.append(pieces[randint(0, 6)])
+
+def reset_variable(var_name="all"):
+    """ used to reset the variable named 'var_name'
+    to its default value """
+    value_reset = False
+    if var_name == "movement_piece_location" or var_name == "all":
+        movement_piece_location = ()
+        value_reset = True
+        print("reset movement_piece_location") # FOR DEBUG, REMOVE LATER
+    if var_name == "current_piece" or var_name == "all":
+        current_piece = ()
+        value_reset = True
+        print("reset current_piece") # FOR DEBUG, REMOVE LATER
+    if var_name == "next_pieces" or var_name == "all":
+        next_pieces = []
+        value_reset = True
+        print("reset next_pieces") # FOR DEBUG, REMOVE LATER
+    if var_name == "timing_increase" or var_name == "all":
+        timing_increase = 1.0
+        value_reset = True
+        print("reset timing_increase") # FOR DEBUG, REMOVE LATER
+    if var_name == "score" or var_name == "all":
+        score = 0
+        value_reset = True
+        print("reset score") # FOR DEBUG, REMOVE LATER
+    if value_reset == False: # FOR DEBUG, REMOVE LATER
+        print("var_name: '" + str(var_name) + "' unrecognized")

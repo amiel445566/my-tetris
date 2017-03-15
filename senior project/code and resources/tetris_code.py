@@ -119,9 +119,10 @@ def rotate_counterclockwise(piece): # *see clockwise notes*
 
 ##############################################################################################
 ######################################## TRANSLATIONS ########################################
-def place_piece(piece, map_index_list):
+def place_piece(piece, map_index_list, update_current_piece=False):
     """ places piece at movement_map[map_index_list] where
     map_index_list = (24-y, 10-x) """
+    global current_piece
     global movement_piece_location
     movement_piece_location = deepcopy(map_index_list)
     placement_clear = True # allows placement to begin if map underneath is clear
@@ -134,6 +135,7 @@ def place_piece(piece, map_index_list):
                       ", " + str(24 - (map_index_list[0] + i)) +
                       ")")
     if placement_clear:
+        current_piece = piece
         for i in range(len(piece)): # place piece in predetermined spot
             for j in range(len(piece[i])):
                 movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
@@ -164,7 +166,7 @@ def move_current_piece(left=False, down=False, right=False, rotate_clockwise=Fal
     # second, clear the map
     reset_map("placement_map")
 
-    # third, apply the translation FINISH THIS NEXT TIME*******************************************
+    # third, apply the translation FINISH THIS NEXT TIME *************************************
     
 
 ##############################################################################################

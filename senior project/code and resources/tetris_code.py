@@ -62,24 +62,6 @@ empty_map = [
 placement_map = deepcopy(empty_map)
 movement_map = deepcopy(empty_map)
 
-def reset_map(map_name):
-    """ resets the specified map:
-    - placement_map
-    - movement_map
-    - all """
-    if map_name == "placement_map" or map_name == "all":
-        global placement_map
-        placement_map = deepcopy(empty_map)
-        print("placement_map reset") # FOR DEBUG, REMOVE LATER
-    if map_name == "movement_map" or map_name == "all":
-        global movement_map
-        global movement_piece_location
-        movement_map = deepcopy(empty_map)
-        movement_piece_location = () # because the piece gets removed, so should its location
-        print("movement_map reset") # FOR DEBUG, REMOVE LATER
-    else: # FOR DEBUG, REMOVE LATER
-        print("map_name: '" + str(map_name) + "' unrecognized")
-
 """ movement_map differs from placement_map because it is used as
 an overlay to the default map space such that there aren't any issues
 with memory and piece locations as well as having the 0's in the piece
@@ -114,7 +96,8 @@ next_pieces = [] # when setting, generate random values between 0 and 6 and gene
 timing_increase = 1.0 # used to increase game speed over time (after n lines completed or something)
 score = 0 # score added by scattered functions throughout (see the outline)
 
-# piece modification functions
+##############################################################################################
+######################################## TRANSLATIONS ########################################
 def rotate_clockwise(piece):
     new_piece = [] # placeholder for the new piece state
     for i in list(range(len(piece[0]))):
@@ -156,6 +139,14 @@ def place_piece(piece, map_index_list):
     for i in movement_map: # FOR DEBUG, REMOVE LATER
         print(i)
 
+def shift_row_down(row_index):
+    """ takes the given row index and shifts the row down
+    by one index in placement_map"""
+    placement_map[row_index + 1] = placement_map[row_index]
+    placement_map[row_index] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # empty current list to avoid copy error
+
+##############################################################################################
+#################################### TESTS ###################################################
 def test_rows_filled():
     """ cycles through all rows in placement_map and returns
     a list of all row indecies that are filled """
@@ -174,11 +165,25 @@ def test_rows_nonzero(): # this function is used to minimize loops in row remova
             rows_nonzero.append(i)
     return rows_nonzero
 
-def shift_row_down(row_index):
-    """ takes the given row index and shifts the row down
-    by one index in placement_map"""
-    placement_map[row_index + 1] = placement_map[row_index]
-    placement_map[row_index] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # empty current list to avoid copy error
+##############################################################################################
+############################## GLOBAL MODIFICATION ###########################################
+def reset_map(map_name):
+    """ resets the specified map:
+    - placement_map
+    - movement_map
+    - all """
+    if map_name == "placement_map" or map_name == "all":
+        global placement_map
+        placement_map = deepcopy(empty_map)
+        print("placement_map reset") # FOR DEBUG, REMOVE LATER
+    if map_name == "movement_map" or map_name == "all":
+        global movement_map
+        global movement_piece_location
+        movement_map = deepcopy(empty_map)
+        movement_piece_location = () # because the piece gets removed, so should its location
+        print("movement_map reset") # FOR DEBUG, REMOVE LATER
+    else: # FOR DEBUG, REMOVE LATER
+        print("map_name: '" + str(map_name) + "' unrecognized")
 
 def remove_filled_rows():
     """ removes filled rows and shifts the remaining

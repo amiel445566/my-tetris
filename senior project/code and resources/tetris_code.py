@@ -1,6 +1,7 @@
 ########################################################################################
 '''
 IMMEDIATE TO DO's
+- Set up main loop (create empty functions for missing pieces)
 - 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -25,7 +26,7 @@ note:   (list MAY be incomplete)
 ########################################################################################
 
 # import statements
-'''from pygame import *''' # reinstall pygame to reenable function
+from pygame import * # reinstall pygame to reenable function
 from sys import *
 from copy import *
 from random import *

@@ -3,7 +3,7 @@
 IMMEDIATE TO DO's
 - set up main loop (create empty functions for missing pieces)
 - print a series of lines with pygame timing every second or so (to learn timing)
-- in the main loop structure, add timing_increase to all applicable states\
+- in the main loop structure, add timing_increase to all applicable states
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

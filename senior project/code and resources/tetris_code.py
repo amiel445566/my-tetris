@@ -128,6 +128,7 @@ def place_piece(piece, map_index_list, update_current_piece=False):
     global movement_piece_location
     movement_piece_location = deepcopy(map_index_list)
     placement_clear = True # allows placement to begin if map underneath is clear
+    # first test for out of bounds index
     if (map_index_list[0] < 0) or \
     (map_index_list[1] < 0) or \
     (map_index_list[0] + len(piece) - 1 > 23) or \
@@ -181,20 +182,12 @@ def move_current_piece(left=False, down=False, right=False, rotate_cc=False, rot
     reset_map("movement_map")
 
     # third, translate current coordinates
-    if rotate_c:
-        place_piece(rotate_clockwise(current_piece),
-                    [movement_piece_location[0] + down,
-                     movement_piece_location[1] + right - left],
-                    True)
-    elif rotate_cc:
-        place_piece(rotate_counterclockwise(current_piece),
-                    [movement_piece_location[0] + down,
-                     movement_piece_location[1] + right - left],
-                    True)
-    else:
-        place_piece(current_piece,
-                    [movement_piece_location[0] + down,
-                     movement_piece_location[1] + right - left])
+    place_piece(rotate_clockwise(current_piece) * rotate_c \
+                + rotate_counterclockwise(current_piece) * rotate_cc \
+                + current_piece * (not rotate_c and not rotate_cc),
+                [movement_piece_location[0] + down,
+                 movement_piece_location[1] + right - left],
+                True)
     print("to: " + str(movement_piece_location)) # FOR DEBUG, REMOVE LATER
 
 ##############################################################################################

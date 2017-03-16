@@ -121,21 +121,30 @@ def rotate_counterclockwise(piece): # *see clockwise notes*
 ######################################## TRANSLATIONS ########################################
 def place_piece(piece, map_index_list, update_current_piece=False):
     """ places piece at movement_map[map_index_list] where
-    map_index_list = (24-y, 10-x) """
+    map_index_list = (24-y, 10-x),
+    update_current_piece is useful for when the parameter is
+    a modified version of the piece and updating is needed"""
     global current_piece
     global movement_piece_location
     movement_piece_location = deepcopy(map_index_list)
     placement_clear = True # allows placement to begin if map underneath is clear
-    for i in range(len(piece)): # first test if the map underneath is clear
-        for j in range(len(piece[i])):
-            if placement_map[map_index_list[0] + i][map_index_list[1] + j] != 0 and piece[i][j] != 0:
-                placement_clear = False
-                print("placement blocked at location: (" + # FOR DEBUG, REMOVE LATER
-                      str(map_index_list[1] + j + 1) +
-                      ", " + str(24 - (map_index_list[0] + i)) +
-                      ")")
+    if (map_index_list[0] < 0) or \
+    (map_index_list[1] < 0) or \
+    (map_index_list[0] + len(piece) - 1 > 23) or \
+    (map_index_list[1] + (len(piece[0]) - 1) > 9):
+        placement_clear = False
     if placement_clear:
-        current_piece = piece
+        for i in range(len(piece)): # second test if the map underneath is clear
+            for j in range(len(piece[i])):
+                if placement_map[map_index_list[0] + i][map_index_list[1] + j] != 0 and piece[i][j] != 0:
+                    placement_clear = False
+                    print("placement blocked at location: (" + # FOR DEBUG, REMOVE LATER
+                          str(map_index_list[1] + j + 1) +
+                          ", " + str(24 - (map_index_list[0] + i)) +
+                          ")")
+    if placement_clear:
+        if update_current_piece:
+            current_piece = deepcopy(piece)
         for i in range(len(piece)): # place piece in predetermined spot
             for j in range(len(piece[i])):
                 movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
@@ -150,24 +159,43 @@ def shift_row_down(row_index):
     placement_map[row_index + 1] = placement_map[row_index]
     placement_map[row_index] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # empty current list to avoid copy error
 
-def move_current_piece(left=False, down=False, right=False, rotate_clockwise=False, rotate_counterclockwise=False):
+def move_current_piece(left=False, down=False, right=False, rotate_cc=False, rotate_c=False):
     """ takes a boolean directonal input and moves the piece
     one unit in that direction """
 
     global movement_piece_location
     global current_piece
-    
+    global movement_map
+
+    print("moving the piece from: " + str(movement_piece_location)) # FOR DEBUG, REMOVE LATER
+
     # first, deal with duplicate and opposite directions
     if left and right:
+        print("can't move left AND right, failed to move")
         return None
-    elif rotate_clockwise and rotate_counterclockwise:
+    elif rotate_c and rotate_cc:
+        print("can't rotate left AND right, failed to rotate")
         return None
     
     # second, clear the map
-    reset_map("placement_map")
+    reset_map("movement_map")
 
-    # third, apply the translation FINISH THIS NEXT TIME *************************************
-    
+    # third, translate current coordinates
+    if rotate_c:
+        place_piece(rotate_clockwise(current_piece),
+                    [movement_piece_location[0] + down,
+                     movement_piece_location[1] + right - left],
+                    True)
+    elif rotate_cc:
+        place_piece(rotate_counterclockwise(current_piece),
+                    [movement_piece_location[0] + down,
+                     movement_piece_location[1] + right - left],
+                    True)
+    else:
+        place_piece(current_piece,
+                    [movement_piece_location[0] + down,
+                     movement_piece_location[1] + right - left])
+    print("to: " + str(movement_piece_location)) # FOR DEBUG, REMOVE LATER
 
 ##############################################################################################
 #################################### TESTS ###################################################

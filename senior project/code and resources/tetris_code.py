@@ -118,7 +118,7 @@ def rotate_counterclockwise(piece): # *see clockwise notes*
 
 ##############################################################################################
 ######################################## TRANSLATIONS ########################################
-def place_piece_movement(piece, map_index_list, update_current_piece=False):
+def place_movement_piece(piece, map_index_list, update_current_piece=False):
     """ places piece at movement_map[map_index_list] where
     map_index_list = (24-y, 10-x),
     update_current_piece is useful for when the parameter is
@@ -134,7 +134,7 @@ def place_piece_movement(piece, map_index_list, update_current_piece=False):
             for j in range(len(piece[i])):
                 movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
     else: # PLACE CODE FOR FAILURE HERE, EG place piece if the main loop is blocked when placing below
-        print("else block reached in place_piece_movement")
+        print("else block reached in place_movement_piece")
     for i in movement_map: # FOR DEBUG, REMOVE LATER
         print(i)
 
@@ -174,7 +174,7 @@ def move_current_piece(left=False, down=False, right=False, rotate_cc=False, rot
 
     # third, translate current coordinates
         # places piece with function input modifications
-    place_piece_movement(rotate_clockwise(current_piece) * rotate_c \
+    place_movement_piece(rotate_clockwise(current_piece) * rotate_c \
                          + rotate_counterclockwise(current_piece) * rotate_cc \
                          + current_piece * (not rotate_c and not rotate_cc),
                          [current_piece_location[0] + down,
@@ -267,14 +267,28 @@ def remove_filled_rows():
 def piece_generation():
     """ generates and updates the variable that holds
     the next pieces """
-    global next_pieces # access the global variable
+
+    global next_pieces
+    global current_piece
+
     while len(next_pieces) < 3: # check length and update accordingly
+        next_pieces.append(pieces[randint(0, 6)])
+    if len(current_piece) < 1: # fill current piece if empty with first index in next_pieces
+        current_piece = next_pieces.pop(0)
         next_pieces.append(pieces[randint(0, 6)])
 
 def reset_variable(var_name="all"):
     """ used to reset the variable named 'var_name'
     to its default value """
+
+    global current_piece_location
+    global current_piece
+    global next_pieces
+    global timing_increase
+    global score
+
     value_reset = False
+    
     if var_name == "current_piece_location" or var_name == "all":
         current_piece_location = ()
         value_reset = True
@@ -305,4 +319,12 @@ def reset_variable(var_name="all"):
 """ note: pseudo code will be commented out because main functions aren't all yet completed;
           this just gives me a framework to work off of """
 
+# define the function for looping
+def main():
+    """ call this function to (re)start the application """
+    
+    # reset all variables
+    reset_variable()
+    piece_generation()
 
+    

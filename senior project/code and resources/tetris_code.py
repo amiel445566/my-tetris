@@ -1,7 +1,6 @@
 ########################################################################################
 '''
 IMMEDIATE TO DO's
-- simplify movement
 - set up main loop (create empty functions for missing pieces)
 - print a series of lines with pygame timing every second or so (to learn timing)
 - in the main loop structure, add timing_increase to all applicable states
@@ -119,38 +118,44 @@ def rotate_counterclockwise(piece): # *see clockwise notes*
 
 ##############################################################################################
 ######################################## TRANSLATIONS ########################################
-def place_piece(piece, map_index_list, update_current_piece=False):
+def test_place_movement(piece, map_index_list):
+    # first, text map bounds with piece and given index
+    if (map_index_list[0] < 0) or \
+    (map_index_list[1] < 0) or \
+    (map_index_list[0] + len(piece) - 1 > 23) or \
+    (map_index_list[1] + (len(piece[0]) - 1) > 9):
+        print("index out of range at: " + str(map_index_list) + " with piece: ")
+        for i in piece:
+            print(i)
+        return False
+    # second, test if the map below movement is clear
+    for i in range(len(piece)):
+        for j in range(len(piece[i])):
+            if placement_map[map_index_list[0] + i][map_index_list[1] + j] != 0 and piece[i][j] != 0:
+                print("placement blocked at location: (" + # FOR DEBUG, REMOVE LATER
+                      str(map_index_list[1] + j + 1) +
+                      ", " + str(24 - (map_index_list[0] + i)) +
+                      ")")
+                return False
+    return True # only outputs if no other Falses are triggered earlier; test success indicator
+
+def place_piece_movement(piece, map_index_list, update_current_piece=False):
     """ places piece at movement_map[map_index_list] where
     map_index_list = (24-y, 10-x),
     update_current_piece is useful for when the parameter is
     a modified version of the piece and updating is needed"""
     global current_piece
     global movement_piece_location
-    movement_piece_location = deepcopy(map_index_list)
-    placement_clear = True # allows placement to begin if map underneath is clear
-    # first test for out of bounds index
-    if (map_index_list[0] < 0) or \
-    (map_index_list[1] < 0) or \
-    (map_index_list[0] + len(piece) - 1 > 23) or \
-    (map_index_list[1] + (len(piece[0]) - 1) > 9):
-        placement_clear = False
-    if placement_clear:
-        for i in range(len(piece)): # second test if the map underneath is clear
-            for j in range(len(piece[i])):
-                if placement_map[map_index_list[0] + i][map_index_list[1] + j] != 0 and piece[i][j] != 0:
-                    placement_clear = False
-                    print("placement blocked at location: (" + # FOR DEBUG, REMOVE LATER
-                          str(map_index_list[1] + j + 1) +
-                          ", " + str(24 - (map_index_list[0] + i)) +
-                          ")")
-    if placement_clear:
+
+    if test_place_movement(piece, map_index_list):
         if update_current_piece:
             current_piece = deepcopy(piece)
+            movement_piece_location = deepcopy(map_index_list)
         for i in range(len(piece)): # place piece in predetermined spot
             for j in range(len(piece[i])):
                 movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
-    else:
-        return None # PLACE CODE FOR FAILURE HERE, EG place piece if the main loop is blocked when placing below
+    else: # PLACE CODE FOR FAILURE HERE, EG place piece if the main loop is blocked when placing below
+        print("else block reached in place_piece_movement")
     for i in movement_map: # FOR DEBUG, REMOVE LATER
         print(i)
 
@@ -179,15 +184,23 @@ def move_current_piece(left=False, down=False, right=False, rotate_cc=False, rot
         return None
     
     # second, clear the map
-    reset_map("movement_map")
+    if test_place_movement(rotate_clockwise(current_piece) * rotate_c \
+                           + rotate_counterclockwise(current_piece) * rotate_cc \
+                           + current_piece * (not rotate_c and not rotate_cc),
+                           [movement_piece_location[0] + down,
+                            movement_piece_location[1] + right - left]):
+        reset_map("movement_map")
+    else:
+        return None
 
     # third, translate current coordinates
-    place_piece(rotate_clockwise(current_piece) * rotate_c \
-                + rotate_counterclockwise(current_piece) * rotate_cc \
-                + current_piece * (not rotate_c and not rotate_cc),
-                [movement_piece_location[0] + down,
-                 movement_piece_location[1] + right - left],
-                True)
+        # places piece with function input modifications
+    place_piece_movement(rotate_clockwise(current_piece) * rotate_c \
+                         + rotate_counterclockwise(current_piece) * rotate_cc \
+                         + current_piece * (not rotate_c and not rotate_cc),
+                         [movement_piece_location[0] + down,
+                          movement_piece_location[1] + right - left],
+                         True)
     print("to: " + str(movement_piece_location)) # FOR DEBUG, REMOVE LATER
 
 ##############################################################################################
@@ -287,3 +300,9 @@ def reset_variable(var_name="all"):
 
 ##############################################################################################
 ##############################################################################################
+######################################### MAIN START #########################################
+
+""" note: pseudo code will be commented out because main functions aren't all yet completed;
+          this just gives me a framework to work off of """
+
+

@@ -26,7 +26,7 @@ note:   (list MAY be incomplete)
 ########################################################################################
 
 # import statements
-from pygame import * # reinstall pygame to reenable function
+from pygame import *
 from sys import *
 from copy import *
 from random import *

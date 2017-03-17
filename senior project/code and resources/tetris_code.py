@@ -208,8 +208,8 @@ def test_movement_placement(piece, map_index_list):
     (map_index_list[1] < 0) or \
     (map_index_list[0] + len(piece) - 1 > 23) or \
     (map_index_list[1] + (len(piece[0]) - 1) > 9):
-        print("index out of range at: " + str(map_index_list) + " with piece: ")
-        for i in piece:
+        print("index out of range at: " + str(map_index_list) + " with piece: ") # FOR DEBUG, REMOVE LATER
+        for i in piece: # FOR DEBUG, REMOVE LATER
             print(i)
         return False
     # second, test if the map below movement is clear

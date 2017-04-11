@@ -1,13 +1,11 @@
 ########################################################################################
 '''
 IMMEDIATE TO DO's
-- create a quick place function
 - begin the implemenetation of scoring
     > 1 point per grid space skipped
     > 2 points per grid space skipped in quick place
     > 10(n^2) points per line completed where n is lines completed in a turn
-    > pass all turns through a timing increase function at the end to scale score
-    based on timing
+    > scale all score by timing_increase (as timing and score scale in tandem)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SOON TO DO's:

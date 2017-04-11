@@ -131,7 +131,7 @@ def place_movement_piece(piece, map_index_list, update_current_piece=False):
     global current_piece
     global current_piece_location
 
-    if test_movement_placement(piece, map_index_list):
+    if test_if_clear(piece, map_index_list):
         if update_current_piece:
             current_piece = deepcopy(piece)
             current_piece_location = deepcopy(map_index_list)
@@ -168,7 +168,7 @@ def move_current_piece(left=False, down=False, right=False, rotate_cc=False, rot
         return None
     
     # second, clear the map
-    if test_movement_placement(rotate_clockwise(current_piece) * rotate_c \
+    if test_if_clear(rotate_clockwise(current_piece) * rotate_c \
                            + rotate_counterclockwise(current_piece) * rotate_cc \
                            + current_piece * (not rotate_c and not rotate_cc),
                            [current_piece_location[0] + down,
@@ -186,6 +186,18 @@ def move_current_piece(left=False, down=False, right=False, rotate_cc=False, rot
                           current_piece_location[1] + right - left],
                          True)
     print("to: " + str(current_piece_location)) # FOR DEBUG, REMOVE LATER
+
+def quick_place():
+    """ places the current piece at the lowest vertical position possible """
+
+    global current_piece
+    global current_piece_location
+    
+    for i in range(1, 25): # places piece one before current piece is blocked (lowest possible)
+        if not test_if_clear(current_piece, [current_piece_location[0] + i, current_piece_location[1]]):
+            confirm_placement([current_piece_location[0] + i - 1, current_piece_location[1]])
+            break
+        
 
 ##############################################################################################
 #################################### TESTS ###################################################
@@ -207,7 +219,7 @@ def test_rows_nonzero(): # this function is used to minimize loops in row remova
             rows_nonzero.append(i)
     return rows_nonzero
 
-def test_movement_placement(piece, map_index_list):
+def test_if_clear(piece, map_index_list):
     # first, text map bounds with piece and given index
     if (map_index_list[0] < 0) or \
     (map_index_list[1] < 0) or \
@@ -235,8 +247,9 @@ def confirm_placement(map_index_list):
 
     global current_piece
     global next_pieces
+    global placement_map
     
-    if test_movement_placement(current_piece, map_index_list):
+    if test_if_clear(current_piece, map_index_list):
         for i in range(len(current_piece)): # place piece in predetermined spot
             for j in range(len(current_piece[i])):
                 if current_piece[i][j] == 0:
@@ -350,7 +363,7 @@ def main():
     """ call this function to (re)start the application """
     
     # reset all variables
-    reset_map()
+    reset_map("all")
     reset_variable()
     piece_generation()
 

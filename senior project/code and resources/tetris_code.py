@@ -1,16 +1,21 @@
 ########################################################################################
 '''
 IMMEDIATE TO DO's
-- set up main loop (create empty functions for missing pieces)
-- print a series of lines with pygame timing every second or so (to learn timing)
-- in the main loop structure, add timing_increase to all applicable states
-
+- create a quick place function
+- begin the implemenetation of scoring
+    > 1 point per grid space skipped
+    > 2 points per grid space skipped in quick place
+    > 10(n^2) points per line completed where n is lines completed in a turn
+    > pass all turns through a timing increase function at the end to scale score
+    based on timing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SOON TO DO's:
 - set up conditions for setting pieces down (copy from movement_map to placement_map)
     > *don't forget to not include 0's in the copying process*
-
+- set up main loop (create empty functions for missing pieces)
+- print a series of lines with pygame timing every second or so (to learn timing)
+- in the main loop structure, add timing_increase to all applicable states
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FINAL TO DO's:
@@ -134,7 +139,7 @@ def place_movement_piece(piece, map_index_list, update_current_piece=False):
             for j in range(len(piece[i])):
                 movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
     else: # PLACE CODE FOR FAILURE HERE, EG place piece if the main loop is blocked when placing below
-        print("else block reached in place_movement_piece")
+        print("else block reached in place_movement_piece") # FOR DEBUG, REMOVE LATER
     for i in movement_map: # FOR DEBUG, REMOVE LATER
         print(i)
 
@@ -225,24 +230,25 @@ def test_movement_placement(piece, map_index_list):
 
 ##############################################################################################
 ############################## GLOBAL MODIFICATION ###########################################
-def reset_map(map_name="all"):
-    """ resets the specified map:
-    - placement_map
-    - movement_map
-    - all """
-    value_reset = False
-    if map_name == "placement_map" or map_name == "all":
-        global placement_map
-        placement_map = deepcopy(empty_map)
-        value_reset = True
-        print("reset placement_map") # FOR DEBUG, REMOVE LATER
-    if map_name == "movement_map" or map_name == "all":
-        global movement_map
-        movement_map = deepcopy(empty_map)
-        value_reset = True
-        print("reset movement_map") # FOR DEBUG, REMOVE LATER
-    if value_reset == False: # FOR DEBUG, REMOVE LATER
-        print("map_name: '" + str(map_name) + "' unrecognized")
+def confirm_placement(map_index_list):
+    """ places the current piece onto the placement map """
+
+    global current_piece
+    global next_pieces
+    
+    if test_movement_placement(current_piece, map_index_list):
+        for i in range(len(current_piece)): # place piece in predetermined spot
+            for j in range(len(current_piece[i])):
+                if current_piece[i][j] == 0:
+                    continue # stops the loop from finishing to prevent 0's from placing
+                placement_map[map_index_list[0] + i][map_index_list[1] + j] = current_piece[i][j]
+        # wipe the current turns' variables clean
+        current_piece = next_pieces.pop(0)
+        piece_generation()
+        reset_map("movement_map")
+        reset_variable("current_piece_location")
+    else: # PLACE CODE FOR FAILURE HERE, EG place piece if the main loop is blocked when placing below
+        print("else block reached in confirm_placement") # FOR DEBUG, REMOVE LATER
 
 def remove_filled_rows():
     """ removes filled rows and shifts the remaining
@@ -271,11 +277,31 @@ def piece_generation():
     global next_pieces
     global current_piece
 
-    while len(next_pieces) < 3: # check length and update accordingly
-        next_pieces.append(pieces[randint(0, 6)])
-    if len(current_piece) < 1: # fill current piece if empty with first index in next_pieces
-        current_piece = next_pieces.pop(0)
-        next_pieces.append(pieces[randint(0, 6)])
+    while len(next_pieces) < 3 or len(current_piece) < 0:
+        while len(next_pieces) < 3: # check length and update accordingly
+            next_pieces.append(pieces[randint(0, 6)])
+        if len(current_piece) < 1: # fill current piece if empty with first index in next_pieces
+            current_piece = next_pieces.pop(0)
+            next_pieces.append(pieces[randint(0, 6)])
+
+def reset_map(map_name="all"):
+    """ resets the specified map:
+    - placement_map
+    - movement_map
+    - all """
+    value_reset = False
+    if map_name == "placement_map" or map_name == "all":
+        global placement_map
+        placement_map = deepcopy(empty_map)
+        value_reset = True
+        print("reset placement_map") # FOR DEBUG, REMOVE LATER
+    if map_name == "movement_map" or map_name == "all":
+        global movement_map
+        movement_map = deepcopy(empty_map)
+        value_reset = True
+        print("reset movement_map") # FOR DEBUG, REMOVE LATER
+    if value_reset == False: # FOR DEBUG, REMOVE LATER
+        print("map_name: '" + str(map_name) + "' unrecognized")
 
 def reset_variable(var_name="all"):
     """ used to reset the variable named 'var_name'
@@ -324,6 +350,7 @@ def main():
     """ call this function to (re)start the application """
     
     # reset all variables
+    reset_map()
     reset_variable()
     piece_generation()
 

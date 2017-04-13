@@ -28,7 +28,7 @@ note:   (list MAY be incomplete)
 ########################################################################################
 
 # import statements
-from pygame import *
+import pygame
 from sys import *
 from copy import *
 from random import *
@@ -350,6 +350,27 @@ def reset_variable(var_name="all"):
         print("var_name: '" + str(var_name) + "' unrecognized")
 
 ##############################################################################################
+########################################## PYGAME  ###########################################
+''' NOTE: The window will always be running until exited, so it only requires one
+    setup and a constant looping '''
+
+# initializations
+pygame.init()
+gameDisplay = pygame.display.set_mode((250, 600))
+pygame.display.set_caption('Tetris by Amiel Iliesi')
+clock = pygame.time.Clock()
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
+        print(event) # list our events
+    pygame.display.update()
+
+    clock.tick(30)
+
+##############################################################################################
 ##############################################################################################
 ######################################### MAIN START #########################################
 
@@ -359,10 +380,15 @@ def reset_variable(var_name="all"):
 # define the function for looping
 def main():
     """ call this function to (re)start the application """
+    # add a menu in later
     
     # reset all variables
     reset_map("all")
     reset_variable()
     piece_generation()
 
+    # begin game loop
+
+    
+            
     

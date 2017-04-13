@@ -34,31 +34,58 @@ from copy import *
 from random import *
 
 # GLOBAL VARIABLES
+background_pattern = [
+    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
+    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
+    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
+    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
+    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
+    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
+    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
+    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
+    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
+    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
+    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
+    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
+    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
+    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
+    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
+    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
+    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
+    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
+    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
+    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
+    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
+    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
+    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
+    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0]
+    ]
+
 empty_map = [
+    [5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 2, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 3, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 6, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    [1, 2, 3, 4, 5, 6, 7, 0, 0, 5]
     ]
 
 # initialize maps
@@ -93,11 +120,43 @@ pieces = [
      [0, 0, 0, 7]]
     ]
 
+black     = (0  ,0  ,0  )
+white     = (255,255,255)
+red       = (255,0  ,0  )
+green     = (0  ,255,0  )
+blue      = (0  ,0  ,255)
+orange    = (255,165,0  )
+cyan      = (0  ,255,255)
+purple    = (153,50 ,204)
+pink      = (255,20 ,147)
+dark_grey = (50 ,50 ,50 )
+
+color_key = {
+    0:black,
+    1:blue,
+    2:red,
+    3:green,
+    4:orange,
+    5:cyan,
+    6:purple,
+    7:pink,
+    8:dark_grey
+    }
+
 current_piece_location = ()# initialize; stores indecies of piece on map; changes every transformation
 current_piece = () # when setting use = deepcopy(piece[n])
 next_pieces = [] # when setting, generate random values between 0 and 6 and generate 3 pieces with append
 timing_increase = 1.0 # used to increase game speed over time (after n lines completed or something)
 score = 0 # score added by scattered functions throughout (see the outline)
+
+display_width = 250
+display_height = 600
+tile_size = 25 # size of each grid space
+
+pygame.init()
+gameDisplay = pygame.display.set_mode((display_width, display_height))
+pygame.display.set_caption('Tetris by Amiel Iliesi 2017')
+clock = pygame.time.Clock()
 
 ##############################################################################################
 ##################################### PIECE MODIFICATION #####################################
@@ -348,28 +407,7 @@ def reset_variable(var_name="all"):
         print("reset score") # FOR DEBUG, REMOVE LATER
     if value_reset == False: # FOR DEBUG, REMOVE LATER
         print("var_name: '" + str(var_name) + "' unrecognized")
-
-##############################################################################################
-########################################## PYGAME  ###########################################
-''' NOTE: The window will always be running until exited, so it only requires one
-    setup and a constant looping '''
-
-# initializations
-pygame.init()
-gameDisplay = pygame.display.set_mode((250, 600))
-pygame.display.set_caption('Tetris by Amiel Iliesi')
-clock = pygame.time.Clock()
-
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            quit()
-        print(event) # list our events
-    pygame.display.update()
-
-    clock.tick(30)
-
+    
 ##############################################################################################
 ##############################################################################################
 ######################################### MAIN START #########################################
@@ -379,16 +417,95 @@ while True:
 
 # define the function for looping
 def main():
-    """ call this function to (re)start the application """
+    """ call this function to start the application """
+    # local variables to the game instance
+    left_pressed = False
+    right_pressed = False
+    down_pressed = False
+    a_pressed = False # rotate counterclockwise
+    d_pressed = False # rotate clockwise
+    space_pressed = False # quick place
+    
     # add a menu in later
     
     # reset all variables
     reset_map("all")
     reset_variable()
     piece_generation()
+    print("current piece:")
+    for i in current_piece: # FOR DEBUG, REMOVE LATER
+        print(i)
+    print("next pieces:")
+    for i in next_pieces: # FOR DEBUG, REMOVE LATER
+        for j in i:
+            print(j)
 
     # begin game loop
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    left_pressed = True
+                if event.key == pygame.K_RIGHT:
+                    right_pressed = True
+                if event.key == pygame.K_DOWN:
+                    down_pressed = True
+                if event.key == pygame.K_a:
+                    a_pressed = True
+                if event.key == pygame.K_d:
+                    d_pressed = True
+                if event.key == pygame.K_SPACE:
+                    space_pressed = True
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT:
+                    left_pressed = False
+                if event.key == pygame.K_RIGHT:
+                    right_pressed = False
+                if event.key == pygame.K_DOWN:
+                    down_pressed = False
+                if event.key == pygame.K_a:
+                    a_pressed = False
+                if event.key == pygame.K_d:
+                    d_pressed = False
+                if event.key == pygame.K_SPACE:
+                    space_pressed = False
+        if right_pressed:
+            print("right pressed")
+        if left_pressed:
+            print("left pressed")
+        if down_pressed:
+            print("down pressed")
+        if a_pressed:
+            print("a pressed")
+        if d_pressed:
+            print("d pressed")
+        if space_pressed:
+            print("space pressed")
+        
+        # draw the map
+        for i in range(24): # first draw the background
+            for j in range(10):
+                pygame.draw.rect(gameDisplay,
+                                 color_key[background_pattern[i][j]],
+                                 [j * tile_size, i * tile_size, tile_size, tile_size])
+        for i in range(24): # next draw both maps on top
+            for j in range(10):
+                for k in range(2): # k used to alternate between placement_map and movement_map
+                    if k == 0:
+                        if placement_map[i][j] != 0:
+                            pygame.draw.rect(gameDisplay,
+                                             color_key[placement_map[i][j]],
+                                             [j * tile_size, i * tile_size, tile_size, tile_size])
+                    else:
+                        if movement_map[i][j] != 0:
+                            pygame.draw.rect(gameDisplay,
+                                             color_key[movement_map[i][j]],
+                                             [j * tile_size, i * tile_size, tile_size, tile_size])
 
-    
-            
+        # update the frame
+        pygame.display.update()
+        clock.tick(30)
     

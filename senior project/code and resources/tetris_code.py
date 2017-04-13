@@ -35,57 +35,57 @@ from random import *
 
 # GLOBAL VARIABLES
 background_pattern = [
-    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
-    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
-    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
-    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
-    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
-    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
-    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
-    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
-    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
-    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
-    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
-    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
-    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
-    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
-    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
-    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
-    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
-    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
-    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
-    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
-    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
-    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0],
-    [0, 8, 0, 8, 0, 8, 0, 8, 0, 8],
-    [8, 0, 8, 0, 8, 0, 8, 0, 8, 0]
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9]
     ]
 
 empty_map = [
-    [5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 2, 2, 0, 0, 0, 0, 0, 0, 0],
+    [2, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 3, 3, 0, 0, 0, 0, 0, 0, 0],
+    [0, 3, 0, 0, 0, 0, 0, 0, 0, 0],
+    [4, 4, 0, 0, 0, 0, 0, 0, 0, 0],
+    [4, 4, 0, 0, 0, 0, 0, 0, 0, 0],
+    [5, 5, 5, 5, 0, 0, 0, 0, 0, 0],
+    [6, 6, 6, 6, 0, 0, 0, 0, 0, 0],
+    [6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [7, 7, 7, 7, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 7, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 2, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 3, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 6, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 2, 3, 4, 5, 6, 7, 0, 0, 5]
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ]
 
 # initialize maps
@@ -120,16 +120,17 @@ pieces = [
      [0, 0, 0, 7]]
     ]
 
-black     = (0  ,0  ,0  )
-white     = (255,255,255)
-red       = (255,0  ,0  )
-green     = (0  ,255,0  )
-blue      = (0  ,0  ,255)
-orange    = (255,165,0  )
-cyan      = (0  ,255,255)
-purple    = (153,50 ,204)
-pink      = (255,20 ,147)
-dark_grey = (50 ,50 ,50 )
+black      = (0  ,0  ,0  )
+white      = (255,255,255)
+red        = (255,0  ,0  )
+green      = (0  ,255,0  )
+blue       = (60 ,60 ,255)
+orange     = (255,165,0  )
+cyan       = (0  ,255,255)
+purple     = (153,50 ,204)
+pink       = (255,20 ,147)
+light_gray = (70 ,70 ,70 )
+dark_gray  = (50 ,50 ,50 )
 
 color_key = {
     0:black,
@@ -140,7 +141,8 @@ color_key = {
     5:cyan,
     6:purple,
     7:pink,
-    8:dark_grey
+    8:light_gray,
+    9:dark_gray
     }
 
 current_piece_location = ()# initialize; stores indecies of piece on map; changes every transformation
@@ -425,6 +427,20 @@ def main():
     a_pressed = False # rotate counterclockwise
     d_pressed = False # rotate clockwise
     space_pressed = False # quick place
+        # used for held repetition
+    left_count = 0
+    right_count = 0
+    down_count = 0
+    a_count = 0
+    d_count = 0
+    space_count = 0
+        # used for confirmation of movement
+    move_left = False
+    move_right = False
+    move_down = False
+    rotate_c = False
+    rotate_cc = False
+    move_qp = False # move quick place
     
     # add a menu in later
     
@@ -446,6 +462,8 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+
+            # test for inputs
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     left_pressed = True
@@ -459,6 +477,7 @@ def main():
                     d_pressed = True
                 if event.key == pygame.K_SPACE:
                     space_pressed = True
+            # remove boolean if key is let go
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
                     left_pressed = False
@@ -472,18 +491,43 @@ def main():
                     d_pressed = False
                 if event.key == pygame.K_SPACE:
                     space_pressed = False
-        if right_pressed:
-            print("right pressed")
-        if left_pressed:
-            print("left pressed")
-        if down_pressed:
-            print("down pressed")
-        if a_pressed:
-            print("a pressed")
-        if d_pressed:
-            print("d pressed")
-        if space_pressed:
-            print("space pressed")
+        
+        # deal with inputs TAG: change the 4 and 10 to be divided by timing_increase and rounded in directionals
+        if left_pressed: # pulse once, and every 4th frame after 10 frames
+            left_count += 1
+            if left_count == 1:
+                move_left = True
+            elif left_count >= 10 and left_count % 4 == 0:
+                move_left = True
+            else:
+                move_left = False
+        else:
+            left_count = 0
+            move_left = False
+        
+        if right_pressed: # pulse once, and every 4th frame after 10 frames
+            right_count += 1
+            if right_count == 1:
+                move_right = True
+            elif left_count >= 10 and left_count % 4 == 0:
+                move_right = True
+            else:
+                move_right = False
+        else:
+            right_count = 0
+            move_right = False
+        
+        if down_pressed: # pulse once, and every 4th frame after 10 frames
+            down_count += 1
+            if down_count == 1:
+                down_right = True
+            elif down_count >= 10 and left_count % 4 == 0:
+                down_right = True
+            else:
+                down_right = False
+        else:
+            down_count = 0
+            down_right = False
         
         # draw the map
         for i in range(24): # first draw the background

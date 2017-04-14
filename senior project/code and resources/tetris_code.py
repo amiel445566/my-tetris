@@ -62,19 +62,19 @@ background_pattern = [
     ]
 
 empty_map = [
-    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-    [0, 2, 2, 0, 0, 0, 0, 0, 0, 0],
-    [2, 2, 0, 0, 0, 0, 0, 0, 0, 0],
-    [3, 3, 3, 0, 0, 0, 0, 0, 0, 0],
-    [0, 3, 0, 0, 0, 0, 0, 0, 0, 0],
-    [4, 4, 0, 0, 0, 0, 0, 0, 0, 0],
-    [4, 4, 0, 0, 0, 0, 0, 0, 0, 0],
-    [5, 5, 5, 5, 0, 0, 0, 0, 0, 0],
-    [6, 6, 6, 6, 0, 0, 0, 0, 0, 0],
-    [6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [7, 7, 7, 7, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 7, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -113,11 +113,11 @@ pieces = [
 
     [[5, 5, 5, 5]],
 
-    [[6, 6, 6, 6],
-     [6, 0, 0, 0]],
+    [[6, 6, 6],
+     [6, 0, 0]],
 
-    [[7, 7, 7, 7],
-     [0, 0, 0, 7]]
+    [[7, 7, 7],
+     [0, 0, 7]]
     ]
 
 black      = (0  ,0  ,0  )
@@ -199,8 +199,6 @@ def place_movement_piece(piece, map_index_list, update_current_piece=False):
                 movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
     else: # PLACE CODE FOR FAILURE HERE, EG place piece if the main loop is blocked when placing below
         print("else block reached in place_movement_piece") # FOR DEBUG, REMOVE LATER
-    for i in movement_map: # FOR DEBUG, REMOVE LATER
-        print(i)
 
 def shift_row_down(row_index):
     """ takes the given row index and shifts the row down
@@ -211,7 +209,7 @@ def shift_row_down(row_index):
 def move_current_piece(left=False, down=False, right=False, rotate_cc=False, rotate_c=False):
     """ takes a boolean directonal input and moves the piece
     one unit in that direction """
-
+    
     global current_piece_location
     global current_piece
     global movement_map
@@ -434,14 +432,15 @@ def main():
     a_count = 0
     d_count = 0
     space_count = 0
+    
         # used for confirmation of movement
     move_left = False
     move_right = False
     move_down = False
-    rotate_c = False
-    rotate_cc = False
+    move_c = False
+    move_cc = False
     move_qp = False # move quick place
-    
+
     # add a menu in later
     
     # reset all variables
@@ -456,6 +455,8 @@ def main():
         for j in i:
             print(j)
 
+    place_movement_piece(pieces[2], [0,0], True) # FOR DEBUG, REMOVE LATER
+    
     # begin game loop
     while True:
         for event in pygame.event.get():
@@ -492,12 +493,12 @@ def main():
                 if event.key == pygame.K_SPACE:
                     space_pressed = False
         
-        # deal with inputs TAG: change the 4 and 10 to be divided by timing_increase and rounded in directionals
-        if left_pressed: # pulse once, and every 4th frame after 10 frames
+        # deal with inputs TAG: change the 8 and 20 to be divided by timing_increase and rounded in directionals
+        if left_pressed: # pulse once, and every 8th frame after 20 frames
             left_count += 1
             if left_count == 1:
                 move_left = True
-            elif left_count >= 10 and left_count % 4 == 0:
+            elif left_count >= 20 and left_count % 8 == 0:
                 move_left = True
             else:
                 move_left = False
@@ -505,11 +506,11 @@ def main():
             left_count = 0
             move_left = False
         
-        if right_pressed: # pulse once, and every 4th frame after 10 frames
+        if right_pressed: # pulse once, and every 8th frame after 20 frames
             right_count += 1
             if right_count == 1:
                 move_right = True
-            elif left_count >= 10 and left_count % 4 == 0:
+            elif right_count >= 20 and right_count % 8 == 0:
                 move_right = True
             else:
                 move_right = False
@@ -517,18 +518,48 @@ def main():
             right_count = 0
             move_right = False
         
-        if down_pressed: # pulse once, and every 4th frame after 10 frames
+        if down_pressed: # pulse once, and every 8th frame after 20 frames
             down_count += 1
             if down_count == 1:
-                down_right = True
-            elif down_count >= 10 and left_count % 4 == 0:
-                down_right = True
+                move_down = True
+            elif down_count >= 20 and down_count % 8 == 0:
+                move_down = True
             else:
-                down_right = False
+                move_down = False
         else:
             down_count = 0
-            down_right = False
-        
+            move_down = False
+
+        if a_pressed: # only single pulse
+            a_count += 1
+            if a_count == 1:
+                move_cc = True
+            else:
+                move_cc = False
+        else:
+            a_count = 0
+            move_cc = False
+
+        if d_pressed: # only single pulse
+            d_count += 1
+            if d_count == 1:
+                move_c = True
+            else:
+                move_c = False
+        else:
+            d_count = 0
+            move_c = False
+
+        if move_left or move_right or move_down or move_cc or move_c: # confirm movement
+            move_current_piece(left=move_left,
+                               right=move_right,
+                               down=move_down,
+                               rotate_cc=move_cc,
+                               rotate_c=move_c)
+        if move_right:
+            print("moved right")
+        if move_cc:
+            print("rotated counter-clockwise")
         # draw the map
         for i in range(24): # first draw the background
             for j in range(10):
@@ -551,5 +582,6 @@ def main():
 
         # update the frame
         pygame.display.update()
-        clock.tick(30)
+        clock.tick(60)
     
+main()

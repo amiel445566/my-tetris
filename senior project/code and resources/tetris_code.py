@@ -140,7 +140,7 @@ cyan                 = (0  ,255,255)
 purple               = (188,65 ,234)
 pink                 = (255,20 ,147)
 light_gray           = (50 ,50 ,50 )
-dark_gray            = (20 ,20 ,20 )
+dark_gray            = (40 ,40 ,40 )
 highlight_light_gray = (80 ,80, 80 )
 highlight_dark_gray  = (65 ,65 ,65 )
 
@@ -485,11 +485,11 @@ def main():
 
             # test for inputs
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_KP4:
                     left_pressed = True
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_KP6:
                     right_pressed = True
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_KP5:
                     down_pressed = True
                 if event.key == pygame.K_a:
                     a_pressed = True
@@ -499,11 +499,11 @@ def main():
                     space_pressed = True
             # remove boolean if key is let go
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_KP4:
                     left_pressed = False
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_KP6:
                     right_pressed = False
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_KP5:
                     down_pressed = False
                 if event.key == pygame.K_a:
                     a_pressed = False

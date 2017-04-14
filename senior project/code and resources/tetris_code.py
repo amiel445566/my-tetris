@@ -191,9 +191,9 @@ def place_movement_piece(piece, map_index_list, update_current_piece=False):
     global current_piece_location
 
     if test_if_clear(piece, map_index_list):
+        current_piece_location = deepcopy(map_index_list)
         if update_current_piece:
             current_piece = deepcopy(piece)
-            current_piece_location = deepcopy(map_index_list)
         for i in range(len(piece)): # place piece in predetermined spot
             for j in range(len(piece[i])):
                 movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
@@ -323,22 +323,24 @@ def confirm_placement(map_index_list):
 def remove_filled_rows():
     """ removes filled rows and shifts the remaining
     blocks above, down """
+    global score
+    
     rows_filled = test_rows_filled()
-    rows_nonzero = test_rows_nonzero()
+    score += (len(rows_filled) ** 2) * 10 * timing_increase # score += 10t(n^2), t = timing, n = rows
+
+    print("rows filled: " + str(rows_filled))
     for i in range(len(test_rows_filled())): # empty filled rows
         placement_map[rows_filled[i]] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    if len(test_rows_nonzero()) > 0:
-        rows_filled = rows_filled[::-1] # start from the top because top rows move down more; avoids stack count
-        row_removed_count = 0
-        while len(rows_filled) > 0: # loop for each row deletion (higher nonzero rows stack movements)
-            for i in rows_nonzero: # non-reversed as to not override lower nonzero rows; rely on rows_filled[::-1]
-                if i < rows_filled[0]:
-                    shift_row_down(i + row_removed_count) # adjust for downward shifts to the row index
-                else:
-                    break
-            row_removed_count += 1
-            del rows_filled[0] # loop to lower rows and restart process until rows_filled empties
-    score += (len(rows_filled) ** 2) * 10 * timing_increase # score += 10t(n^2), t = timing, n = rows
+
+    rows_nonzero = test_rows_nonzero()
+    while len(rows_filled) > 0:
+        down_shift_index = max(rows_filled) # tells the loop where to begin shifting from
+        for i in range(rows_filled[len(rows_filled) - 1] - rows_nonzero[0]):
+            shift_row_down(down_shift_index - i - 1) # shift down each row above the lowest filled row
+        del rows_filled[len(rows_filled) - 1] # remove the max value from rows filled as it has been completed already
+        for i in (rows_filled, rows_nonzero): # add 1 to each index value
+            for j in range(len(i)):
+                i[j] = i[j] + 1
 
 def piece_generation():
     """ generates and updates the variable that holds
@@ -454,11 +456,11 @@ def main():
     for i in next_pieces: # FOR DEBUG, REMOVE LATER
         for j in i:
             print(j)
-
-    place_movement_piece(pieces[2], [0,0], True) # FOR DEBUG, REMOVE LATER
     
     # begin game loop
     while True:
+        if len(current_piece_location) == 0:
+            place_movement_piece(current_piece, [0, 0])
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -549,8 +551,19 @@ def main():
         else:
             d_count = 0
             move_c = False
-
-        if move_left or move_right or move_down or move_cc or move_c: # confirm movement
+            
+        if space_pressed: # only single pulse
+            space_count += 1
+            if space_count == 1:
+                move_qp = True
+            else:
+                move_qp = False
+        else:
+            space_count = 0
+            move_qp = False
+        if move_qp:
+            quick_place()
+        if (move_left or move_right or move_down or move_cc or move_c) and not move_qp: # confirm movement
             move_current_piece(left=move_left,
                                right=move_right,
                                down=move_down,
@@ -560,6 +573,9 @@ def main():
             print("moved right")
         if move_cc:
             print("rotated counter-clockwise")
+
+        if test_rows_filled():
+            remove_filled_rows()
         # draw the map
         for i in range(24): # first draw the background
             for j in range(10):

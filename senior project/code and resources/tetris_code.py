@@ -36,29 +36,29 @@ from random import *
 # GLOBAL VARIABLES
 background_pattern = [
     [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
     [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
     [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
     [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
     [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
     [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
     [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
     [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
     [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
     [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
     [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
     [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9]
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8]
     ]
 
 empty_map = [
@@ -151,9 +151,9 @@ next_pieces = [] # when setting, generate random values between 0 and 6 and gene
 timing_increase = 1.0 # used to increase game speed over time (after n lines completed or something)
 score = 0 # score added by scattered functions throughout (see the outline)
 
-display_width = 250
-display_height = 600
-tile_size = 25 # size of each grid space
+display_width = 200
+display_height = 480
+tile_size = 20 # size of each grid space
 
 pygame.init()
 gameDisplay = pygame.display.set_mode((display_width, display_height))
@@ -199,6 +199,7 @@ def place_movement_piece(piece, map_index_list, update_current_piece=False):
                 movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
     else: # PLACE CODE FOR FAILURE HERE, EG place piece if the main loop is blocked when placing below
         print("else block reached in place_movement_piece") # FOR DEBUG, REMOVE LATER
+        main() # TAG: configure this more appropriately better
 
 def shift_row_down(row_index):
     """ takes the given row index and shifts the row down
@@ -213,8 +214,6 @@ def move_current_piece(left=False, down=False, right=False, rotate_cc=False, rot
     global current_piece_location
     global current_piece
     global movement_map
-
-    print("moving the piece from: " + str(current_piece_location)) # FOR DEBUG, REMOVE LATER
 
     # first, deal with duplicate and opposite directions
     if left and right:
@@ -242,7 +241,6 @@ def move_current_piece(left=False, down=False, right=False, rotate_cc=False, rot
                          [current_piece_location[0] + down,
                           current_piece_location[1] + right - left],
                          True)
-    print("to: " + str(current_piece_location)) # FOR DEBUG, REMOVE LATER
 
 def quick_place():
     """ places the current piece at the lowest vertical position possible """
@@ -333,7 +331,7 @@ def remove_filled_rows():
         placement_map[rows_filled[i]] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     rows_nonzero = test_rows_nonzero()
-    while len(rows_filled) > 0:
+    while len(rows_filled) > 0 and len(rows_nonzero) > 0:
         down_shift_index = max(rows_filled) # tells the loop where to begin shifting from
         for i in range(rows_filled[len(rows_filled) - 1] - rows_nonzero[0]):
             shift_row_down(down_shift_index - i - 1) # shift down each row above the lowest filled row
@@ -459,8 +457,13 @@ def main():
     
     # begin game loop
     while True:
-        if len(current_piece_location) == 0:
-            place_movement_piece(current_piece, [0, 0])
+        if len(current_piece_location) == 0: # <- there isn't a current piece in the movement map
+            if len(current_piece[0]) == 2: # <- and the 2 similar blocks below center placement
+                place_movement_piece(current_piece, [0, 4])
+            if len(current_piece[0]) == 3:
+                place_movement_piece(current_piece, [0, 3])
+            if len(current_piece[0]) == 4:
+                place_movement_piece(current_piece, [0, 3])
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()

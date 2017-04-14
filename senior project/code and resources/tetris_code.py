@@ -20,9 +20,7 @@ SOON TO DO's:
 - add in menu
     > clickable
     > keyboard select as well (?)
-- background as dark grey, but white grey in the row occupied by current piece
 - prepare to add in SFX and BGM
-- 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -45,30 +43,30 @@ from random import *
 
 # GLOBAL VARIABLES
 background_pattern = [
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9, 8, 9, 8, 9]
     ]
 
 empty_map = [
@@ -130,17 +128,19 @@ pieces = [
      [0, 0, 7]]
     ]
 
-black      = (0  ,0  ,0  )
-white      = (255,255,255)
-red        = (255,0  ,0  )
-green      = (0  ,255,0  )
-blue       = (60 ,60 ,255)
-orange     = (255,165,0  )
-cyan       = (0  ,255,255)
-purple     = (153,50 ,204)
-pink       = (255,20 ,147)
-light_gray = (70 ,70 ,70 )
-dark_gray  = (50 ,50 ,50 )
+black                = (0  ,0  ,0  )
+white                = (255,255,255)
+red                  = (255,0  ,0  )
+green                = (0  ,255,0  )
+blue                 = (80 ,80 ,255)
+orange               = (255,165,0  )
+cyan                 = (0  ,255,255)
+purple               = (188,65 ,234)
+pink                 = (255,20 ,147)
+light_gray           = (70 ,70 ,70 )
+dark_gray            = (50 ,50 ,50 )
+highlight_light_gray = (105,105,105)
+highlight_dark_gray  = (95 ,95 ,95 )
 
 color_key = {
     0:black,
@@ -152,7 +152,9 @@ color_key = {
     6:purple,
     7:pink,
     8:light_gray,
-    9:dark_gray
+    9:dark_gray,
+    10:highlight_light_gray,
+    11:highlight_dark_gray
     }
 
 current_piece_location = ()# initialize; stores indecies of piece on map; changes every transformation
@@ -513,7 +515,7 @@ def main():
             left_count += 1
             if left_count == 1:
                 move_left = True
-            elif left_count >= 20 and left_count % 8 == 0:
+            elif left_count >= 15 and left_count % 5 == 0:
                 move_left = True
             else:
                 move_left = False
@@ -525,7 +527,7 @@ def main():
             right_count += 1
             if right_count == 1:
                 move_right = True
-            elif right_count >= 20 and right_count % 8 == 0:
+            elif right_count >= 15 and right_count % 5 == 0:
                 move_right = True
             else:
                 move_right = False
@@ -537,7 +539,7 @@ def main():
             down_count += 1
             if down_count == 1:
                 move_down = True
-            elif down_count >= 20 and down_count % 8 == 0:
+            elif down_count >= 15 and down_count % 5 == 0:
                 move_down = True
             else:
                 move_down = False
@@ -594,11 +596,11 @@ def main():
             for j in range(10):
                 if len(current_piece_location) > 0 and j in range(current_piece_location[1], current_piece_location[1] + len(current_piece[0])):
                     pygame.draw.rect(gameDisplay,
-                                     light_gray,
+                                     color_key[background_pattern[i][j] + 2],
                                      [j * tile_size, i * tile_size, tile_size, tile_size])
                 else:
                     pygame.draw.rect(gameDisplay,
-                                     dark_gray,
+                                     color_key[background_pattern[i][j]],
                                      [j * tile_size, i * tile_size, tile_size, tile_size])
         for i in range(24): # next draw both maps on top
             for j in range(10):

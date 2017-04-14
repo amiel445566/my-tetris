@@ -1,6 +1,8 @@
 ########################################################################################
 '''
 SOON TO DO's:
+- clean up background highlight above
+    > do this by testing column contents and determining if above is covered or not
 - change favicon
 - add in placement when down is denied
     > don't forget that diagonals may need different permissions

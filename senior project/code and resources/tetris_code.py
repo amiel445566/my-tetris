@@ -139,10 +139,10 @@ orange               = (255,165,0  )
 cyan                 = (0  ,255,255)
 purple               = (188,65 ,234)
 pink                 = (255,20 ,147)
-light_gray           = (70 ,70 ,70 )
-dark_gray            = (50 ,50 ,50 )
-highlight_light_gray = (105,105,105)
-highlight_dark_gray  = (95 ,95 ,95 )
+light_gray           = (50 ,50 ,50 )
+dark_gray            = (20 ,20 ,20 )
+highlight_light_gray = (80 ,80, 80 )
+highlight_dark_gray  = (65 ,65 ,65 )
 
 color_key = {
     0:black,

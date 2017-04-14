@@ -1,19 +1,29 @@
 ########################################################################################
 '''
-IMMEDIATE TO DO's
-- begin the implemenetation of scoring
-    > 1 point per grid space skipped
-    > 2 points per grid space skipped in quick place
-    > 10(n^2) points per line completed where n is lines completed in a turn
-    > scale all score by timing_increase (as timing and score scale in tandem)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 SOON TO DO's:
-- set up conditions for setting pieces down (copy from movement_map to placement_map)
-    > *don't forget to not include 0's in the copying process*
-- set up main loop (create empty functions for missing pieces)
-- print a series of lines with pygame timing every second or so (to learn timing)
-- in the main loop structure, add timing_increase to all applicable states
+- change favicon
+- add in placement when down is denied
+    > don't forget that diagonals may need different permissions
+- add in UI
+    > next pieces
+        >> hold functionality? (if so, up/s/shift?)
+    > learn to add text
+    > score
+        >> complete by adding:
+            - manual down press (1t)
+            - manual quick place (4nt)
+            - all scaled by timing increase
+    > lines completed
+    > blocks placed (?)
+    > clickable (learn how) button back to menu
+    > alternatively, escape to open menu
+- add in menu
+    > clickable
+    > keyboard select as well (?)
+- background as dark grey, but white grey in the row occupied by current piece
+- prepare to add in SFX and BGM
+- 
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FINAL TO DO's:
@@ -35,30 +45,30 @@ from random import *
 
 # GLOBAL VARIABLES
 background_pattern = [
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8],
-    [9, 8, 9, 8, 9, 8, 9, 8, 9, 8]
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
     ]
 
 empty_map = [
@@ -580,11 +590,16 @@ def main():
         if test_rows_filled():
             remove_filled_rows()
         # draw the map
-        for i in range(24): # first draw the background
+        for i in range(24): # first draw the background; highlight current piece columns
             for j in range(10):
-                pygame.draw.rect(gameDisplay,
-                                 color_key[background_pattern[i][j]],
-                                 [j * tile_size, i * tile_size, tile_size, tile_size])
+                if len(current_piece_location) > 0 and j in range(current_piece_location[1], current_piece_location[1] + len(current_piece[0])):
+                    pygame.draw.rect(gameDisplay,
+                                     light_gray,
+                                     [j * tile_size, i * tile_size, tile_size, tile_size])
+                else:
+                    pygame.draw.rect(gameDisplay,
+                                     dark_gray,
+                                     [j * tile_size, i * tile_size, tile_size, tile_size])
         for i in range(24): # next draw both maps on top
             for j in range(10):
                 for k in range(2): # k used to alternate between placement_map and movement_map

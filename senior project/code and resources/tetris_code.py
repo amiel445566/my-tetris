@@ -2,11 +2,8 @@
 '''
 SOON TO DO's:
 - clean up background highlight
-    > find out why it flickers when updating only /sometimes/ (debug by slowing down tickrate?)
     > do this by testing column contents and determining if above is covered or not
 - change favicon
-- add in placement when down is denied
-    > don't forget that diagonals may need different permissions
 - add in UI
     > next pieces
         >> hold functionality? (if so, up/s/shift?)
@@ -109,7 +106,7 @@ an overlay to the default map space such that there aren't any issues
 with memory and piece locations as well as having the 0's in the piece
 array overwrite used space """
 
-# VARIABLES
+# variables
 pieces = [
     [[1, 1, 0],
      [0, 1, 1]],
@@ -131,7 +128,7 @@ pieces = [
     [[7, 7, 7],
      [0, 0, 7]]
     ]
-
+    # colors
 black                = (0  ,0  ,0  )
 white                = (255,255,255)
 red                  = (255,0  ,0  )
@@ -145,7 +142,7 @@ light_gray           = (50 ,50 ,50 )
 dark_gray            = (40 ,40 ,40 )
 highlight_light_gray = (80 ,80, 80 )
 highlight_dark_gray  = (65 ,65 ,65 )
-
+    # color references
 color_key = {
     0:black,
     1:blue,
@@ -160,7 +157,7 @@ color_key = {
     10:highlight_light_gray,
     11:highlight_dark_gray
     }
-
+    # data variables
 current_piece_location = ()# initialize; stores indecies of piece on map; changes every transformation
 current_piece = () # when setting use = deepcopy(piece[n])
 next_pieces = [] # when setting, generate random values between 0 and 6 and generate 3 pieces with append
@@ -168,11 +165,11 @@ lines_completed = 0 # used to calculate timing increase, and is also a display s
 timing_increase = 1.0 # used to increase game speed over time (after n lines completed or something)
 score = 0 # score added by scattered functions throughout (see the outline)
 since_last_lower = 0 # used to determine whether or not to automatically lower the current piece
-
+    # display variables
 display_width = 200
 display_height = 480
 tile_size = 20 # size of each grid space
-
+    # display initializations
 pygame.init()
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('Tetris by Amiel Iliesi 2017')
@@ -215,8 +212,7 @@ def place_movement_piece(piece, map_index_list, update_current_piece=False):
         for i in range(len(piece)): # place piece in predetermined spot
             for j in range(len(piece[i])):
                 movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
-    else: # PLACE CODE FOR FAILURE HERE, EG place piece if the main loop is blocked when placing below
-        print("else block reached in place_movement_piece") # FOR DEBUG, REMOVE LATER
+    else: # PLACE CODE FOR FAILURE HERE, IE placing at the index is blocked
         main() # TAG: configure this more appropriately later; restarts game
 
 def shift_row_down(row_index):
@@ -234,6 +230,9 @@ def move_current_piece(left=False, down=False, right=False, rotate_cc=False, rot
     global movement_map
     global since_last_lower
 
+    #local variable(s)
+    secondary_condition = False # if a directional or rotation is used in tandem with down, all but down are discarded if the first test fails
+    
     # first, deal with duplicate and opposite directions
     if left and right:
         print("can't move left AND right, failed to move")
@@ -250,19 +249,27 @@ def move_current_piece(left=False, down=False, right=False, rotate_cc=False, rot
                             current_piece_location[1] + right - left]):
         if down:
             since_last_lower = 0
-            print("since last lower reset in movement block")
+        reset_map("movement_map")
+    elif test_if_clear(current_piece,
+                       [current_piece_location[0] + down,
+                        current_piece_location[1]]):
+        secondary_condition = True
+        since_last_lower = 0
         reset_map("movement_map")
     else:
         return None
 
     # third, translate current coordinates
         # places piece with function input modifications
-    place_movement_piece(rotate_clockwise(current_piece) * rotate_c \
-                         + rotate_counterclockwise(current_piece) * rotate_cc \
-                         + current_piece * (not rotate_c and not rotate_cc),
-                         [current_piece_location[0] + down,
-                          current_piece_location[1] + right - left],
-                         True)
+    if not secondary_condition:
+        place_movement_piece(rotate_clockwise(current_piece) * rotate_c \
+                             + rotate_counterclockwise(current_piece) * rotate_cc \
+                             + current_piece * (not rotate_c and not rotate_cc),
+                             [current_piece_location[0] + down,
+                              current_piece_location[1] + right - left],
+                             True)
+    else:
+        place_movement_piece(current_piece, (current_piece_location[0] + down, current_piece_location[1]))
 
 def quick_place():
     """ places the current piece at the lowest vertical position possible """
@@ -363,7 +370,6 @@ def remove_filled_rows():
     lines_completed += len(rows_filled)
     score += (len(rows_filled) ** 2) * 10 * timing_increase # score += 10t(n^2), t = timing, n = rows
 
-    print("rows filled: " + str(rows_filled))
     for i in range(len(test_rows_filled())): # empty filled rows
         placement_map[rows_filled[i]] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -465,6 +471,9 @@ def main():
     a_pressed = False # rotate counterclockwise
     d_pressed = False # rotate clockwise
     space_pressed = False # quick place
+    disable_input = False # for overriding input
+    auto_lower = False # used to auto-lower the piece on the board
+    at_bottom = False
         # used for held repetition
     left_count = 0
     right_count = 0
@@ -480,10 +489,6 @@ def main():
     move_c = False
     move_cc = False
     move_qp = False # move quick place
-
-    disable_input = False # modify when overriding input
-    auto_lower = False # used to auto-lower the piece on the board
-    at_bottom = False
 
     # add a menu in later
     
@@ -504,7 +509,6 @@ def main():
     while True:
         # use auto-advancement before anything else to ensure input disable upon auto-advance
         if since_last_lower == round((1/timing_increase) * 60): # 60/timing_increase = frames till auto advance
-            print("in since_last_lower block")
             disable_input = True
             auto_lower = True
         else:
@@ -545,20 +549,20 @@ def main():
                 if event.key == pygame.K_SPACE:
                     space_pressed = False
         
-        if left_pressed and not disable_input: # pulse once, and every 8th frame after 15 frames
-            left_count += 1
+        if left_pressed and not disable_input: # if key is pressed and if the input keys are not disabled
+            left_count += 1 # count used for held input repetition
             if left_count == 1:
-                move_left = True
+                move_left = True # moves if input is initially pulsed
             elif left_count >= round((1/timing_increase) * 15) and left_count % round((1/timing_increase) * 5) == 0:
-                move_left = True
+                move_left = True # moves if input is repeated after held time (scaled to timing increase)
             else:
-                move_left = False
+                move_left = False # fails to fall in cycle timings
         else:
             if not disable_input:
-                left_count = 0
+                left_count = 0 # don't remove counted cycles if cause of break is auto-down (for smooth transition)
             move_left = False
         
-        if right_pressed and not disable_input:
+        if right_pressed and not disable_input: # see left
             right_count += 1
             if right_count == 1:
                 move_right = True
@@ -571,7 +575,7 @@ def main():
                 right_count = 0
             move_right = False
         
-        if down_pressed and not disable_input:
+        if down_pressed and not disable_input: # see left
             down_count += 1
             if down_count == 1:
                 move_down = True
@@ -584,7 +588,7 @@ def main():
                 down_count = 0
             move_down = False
 
-        if a_pressed and not disable_input:
+        if a_pressed and not disable_input: # see left
             a_count += 1
             if a_count == 1:
                 move_cc = True
@@ -595,8 +599,8 @@ def main():
                 a_count = 0
             move_cc = False
 
-        if d_pressed and not disable_input:
-            score += round((1/timing_increase) * 10)
+        if d_pressed and not disable_input: # see left
+            score += round((1/timing_increase) * 10) # score is based on speed scale with base unit of 10
             d_count += 1
             if d_count == 1:
                 move_c = True
@@ -607,7 +611,7 @@ def main():
                 d_count = 0
             move_c = False
             
-        if space_pressed and not disable_input:
+        if space_pressed and not disable_input: # see left
             space_count += 1
             if space_count == 1:
                 move_qp = True
@@ -621,15 +625,14 @@ def main():
         if move_qp:
             quick_place()
 
-        if auto_lower:
+        if auto_lower: # "n" cycles passed, auto_lower activated
             move_down = True
-        elif not down_pressed:
+        elif not down_pressed: # don't default to move_down false if down being pressed; don't override user inputs
             move_down = False
         
-        if move_down and not (move_left or move_right):
-            if not test_if_clear(current_piece, (current_piece_location[0] + 1, current_piece_location[1])):
-                confirm_placement(current_piece_location)
-                at_bottom = True
+        if move_down and not test_if_clear(current_piece, (current_piece_location[0] + 1, current_piece_location[1])): # block for placing low blocks
+            confirm_placement(current_piece_location)
+            at_bottom = True
               
         if (move_left or move_right or move_down or move_cc or move_c) and not move_qp and not at_bottom: # confirm movement
             move_current_piece(left=move_left,
@@ -637,6 +640,7 @@ def main():
                                down=move_down,
                                rotate_cc=move_cc,
                                rotate_c=move_c)
+        
         if test_rows_filled():
             remove_filled_rows()
                 

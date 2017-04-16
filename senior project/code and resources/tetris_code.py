@@ -1,7 +1,8 @@
 ########################################################################################
 '''
 SOON TO DO's:
-- clean up background highlight above
+- clean up background highlight
+    > find out why it flickers when updating only /sometimes/ (debug by slowing down tickrate?)
     > do this by testing column contents and determining if above is covered or not
 - change favicon
 - add in placement when down is denied
@@ -39,6 +40,7 @@ note:   (list MAY be incomplete)
 
 # import statements
 import pygame
+from math import *
 from sys import *
 from copy import *
 from random import *
@@ -162,8 +164,10 @@ color_key = {
 current_piece_location = ()# initialize; stores indecies of piece on map; changes every transformation
 current_piece = () # when setting use = deepcopy(piece[n])
 next_pieces = [] # when setting, generate random values between 0 and 6 and generate 3 pieces with append
+lines_completed = 0 # used to calculate timing increase, and is also a display stat
 timing_increase = 1.0 # used to increase game speed over time (after n lines completed or something)
 score = 0 # score added by scattered functions throughout (see the outline)
+since_last_lower = 0 # used to determine whether or not to automatically lower the current piece
 
 display_width = 200
 display_height = 480
@@ -213,7 +217,7 @@ def place_movement_piece(piece, map_index_list, update_current_piece=False):
                 movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
     else: # PLACE CODE FOR FAILURE HERE, EG place piece if the main loop is blocked when placing below
         print("else block reached in place_movement_piece") # FOR DEBUG, REMOVE LATER
-        main() # TAG: configure this more appropriately better
+        main() # TAG: configure this more appropriately later; restarts game
 
 def shift_row_down(row_index):
     """ takes the given row index and shifts the row down
@@ -228,6 +232,7 @@ def move_current_piece(left=False, down=False, right=False, rotate_cc=False, rot
     global current_piece_location
     global current_piece
     global movement_map
+    global since_last_lower
 
     # first, deal with duplicate and opposite directions
     if left and right:
@@ -243,6 +248,9 @@ def move_current_piece(left=False, down=False, right=False, rotate_cc=False, rot
                            + current_piece * (not rotate_c and not rotate_cc),
                            [current_piece_location[0] + down,
                             current_piece_location[1] + right - left]):
+        if down:
+            since_last_lower = 0
+            print("since last lower reset in movement block")
         reset_map("movement_map")
     else:
         return None
@@ -261,10 +269,12 @@ def quick_place():
 
     global current_piece
     global current_piece_location
+    global score
     
     for i in range(1, 25): # places piece one before current piece is blocked (lowest possible)
         if not test_if_clear(current_piece, [current_piece_location[0] + i, current_piece_location[1]]):
             confirm_placement([current_piece_location[0] + i - 1, current_piece_location[1]])
+            score += round((1/timing_increase) * 20 * (i-1))
             break
         
 
@@ -294,21 +304,22 @@ def test_if_clear(piece, map_index_list):
     (map_index_list[1] < 0) or \
     (map_index_list[0] + len(piece) - 1 > 23) or \
     (map_index_list[1] + (len(piece[0]) - 1) > 9):
-        print("index out of range at: " + str(map_index_list) + " with piece: ") # FOR DEBUG, REMOVE LATER
-        for i in piece: # FOR DEBUG, REMOVE LATER
-            print(i)
         return False
     # second, test if the map below movement is clear
     for i in range(len(piece)):
         for j in range(len(piece[i])):
             if placement_map[map_index_list[0] + i][map_index_list[1] + j] != 0 and piece[i][j] != 0:
-                print("placement blocked at location: (" + # FOR DEBUG, REMOVE LATER
-                      str(map_index_list[1] + j + 1) +
-                      ", " + str(24 - (map_index_list[0] + i)) +
-                      ")")
                 return False
     return True # only outputs if no other Falses are triggered earlier; test success indicator
 
+def test_timing():
+    """ retests the need for a timing increase and updates variables accordingly """
+    global lines_completed
+    global timing_increase
+
+    # 0.1 = amount increased, 5 = lines completed before amount increased applies
+    timing_increase = 1.0 + 0.1 * floor(lines_completed / 5)
+    
 ##############################################################################################
 ############################## GLOBAL MODIFICATION ###########################################
 def confirm_placement(map_index_list):
@@ -317,6 +328,7 @@ def confirm_placement(map_index_list):
     global current_piece
     global next_pieces
     global placement_map
+    global since_last_lower
     
     if test_if_clear(current_piece, map_index_list):
         for i in range(len(current_piece)): # place piece in predetermined spot
@@ -325,10 +337,19 @@ def confirm_placement(map_index_list):
                     continue # stops the loop from finishing to prevent 0's from placing
                 placement_map[map_index_list[0] + i][map_index_list[1] + j] = current_piece[i][j]
         # wipe the current turns' variables clean
+        reset_variable("current_piece_location")
         current_piece = next_pieces.pop(0)
         piece_generation()
         reset_map("movement_map")
-        reset_variable("current_piece_location")
+        since_last_lower = 0
+
+        # place next piece; avoids conflicts/logical latency with the display
+        if len(current_piece[0]) == 2:
+            place_movement_piece(current_piece, [0, 4])
+        if len(current_piece[0]) == 3:
+            place_movement_piece(current_piece, [0, 3])
+        if len(current_piece[0]) == 4:
+            place_movement_piece(current_piece, [0, 3])
     else: # PLACE CODE FOR FAILURE HERE, EG place piece if the main loop is blocked when placing below
         print("else block reached in confirm_placement") # FOR DEBUG, REMOVE LATER
 
@@ -336,8 +357,10 @@ def remove_filled_rows():
     """ removes filled rows and shifts the remaining
     blocks above, down """
     global score
+    global lines_completed
     
     rows_filled = test_rows_filled()
+    lines_completed += len(rows_filled)
     score += (len(rows_filled) ** 2) * 10 * timing_increase # score += 10t(n^2), t = timing, n = rows
 
     print("rows filled: " + str(rows_filled))
@@ -353,6 +376,7 @@ def remove_filled_rows():
         for i in (rows_filled, rows_nonzero): # add 1 to each index value
             for j in range(len(i)):
                 i[j] = i[j] + 1
+    test_timing()
 
 def piece_generation():
     """ generates and updates the variable that holds
@@ -378,12 +402,10 @@ def reset_map(map_name="all"):
         global placement_map
         placement_map = deepcopy(empty_map)
         value_reset = True
-        print("reset placement_map") # FOR DEBUG, REMOVE LATER
     if map_name == "movement_map" or map_name == "all":
         global movement_map
         movement_map = deepcopy(empty_map)
         value_reset = True
-        print("reset movement_map") # FOR DEBUG, REMOVE LATER
     if value_reset == False: # FOR DEBUG, REMOVE LATER
         print("map_name: '" + str(map_name) + "' unrecognized")
 
@@ -402,23 +424,24 @@ def reset_variable(var_name="all"):
     if var_name == "current_piece_location" or var_name == "all":
         current_piece_location = ()
         value_reset = True
-        print("reset current_piece_location") # FOR DEBUG, REMOVE LATER
     if var_name == "current_piece" or var_name == "all":
         current_piece = ()
         value_reset = True
-        print("reset current_piece") # FOR DEBUG, REMOVE LATER
     if var_name == "next_pieces" or var_name == "all":
         next_pieces = []
         value_reset = True
-        print("reset next_pieces") # FOR DEBUG, REMOVE LATER
     if var_name == "timing_increase" or var_name == "all":
         timing_increase = 1.0
         value_reset = True
-        print("reset timing_increase") # FOR DEBUG, REMOVE LATER
     if var_name == "score" or var_name == "all":
         score = 0
         value_reset = True
-        print("reset score") # FOR DEBUG, REMOVE LATER
+    if var_name == "lines_completed" or var_name == "all":
+        lines_completed = 0
+        value_reset = True
+    if var_name == "since_last_lower" or var_name == "all":
+        since_last_lower = 0
+        value_reset = True
     if value_reset == False: # FOR DEBUG, REMOVE LATER
         print("var_name: '" + str(var_name) + "' unrecognized")
     
@@ -432,6 +455,9 @@ def reset_variable(var_name="all"):
 # define the function for looping
 def main():
     """ call this function to start the application """
+    # global variable declaration
+    global since_last_lower
+    
     # local variables to the game instance
     left_pressed = False
     right_pressed = False
@@ -455,29 +481,36 @@ def main():
     move_cc = False
     move_qp = False # move quick place
 
+    disable_input = False # modify when overriding input
+    auto_lower = False # used to auto-lower the piece on the board
+    at_bottom = False
+
     # add a menu in later
     
     # reset all variables
     reset_map("all")
     reset_variable()
     piece_generation()
-    print("current piece:")
-    for i in current_piece: # FOR DEBUG, REMOVE LATER
-        print(i)
-    print("next pieces:")
-    for i in next_pieces: # FOR DEBUG, REMOVE LATER
-        for j in i:
-            print(j)
-    
+
+    # place the first piece into the map
+    if len(current_piece[0]) == 2:
+        place_movement_piece(current_piece, [0, 4])
+    if len(current_piece[0]) == 3:
+        place_movement_piece(current_piece, [0, 3])
+    if len(current_piece[0]) == 4:
+        place_movement_piece(current_piece, [0, 3])
+
     # begin game loop
     while True:
-        if len(current_piece_location) == 0: # <- there isn't a current piece in the movement map
-            if len(current_piece[0]) == 2: # <- and the 2 similar blocks below center placement
-                place_movement_piece(current_piece, [0, 4])
-            if len(current_piece[0]) == 3:
-                place_movement_piece(current_piece, [0, 3])
-            if len(current_piece[0]) == 4:
-                place_movement_piece(current_piece, [0, 3])
+        # use auto-advancement before anything else to ensure input disable upon auto-advance
+        if since_last_lower == round((1/timing_increase) * 60): # 60/timing_increase = frames till auto advance
+            print("in since_last_lower block")
+            disable_input = True
+            auto_lower = True
+        else:
+            disable_input = False
+            auto_lower = False
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -498,7 +531,7 @@ def main():
                 if event.key == pygame.K_SPACE:
                     space_pressed = True
             # remove boolean if key is let go
-            if event.type == pygame.KEYUP:
+            elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_KP4:
                     left_pressed = False
                 if event.key == pygame.K_KP6:
@@ -512,87 +545,102 @@ def main():
                 if event.key == pygame.K_SPACE:
                     space_pressed = False
         
-        # deal with inputs TAG: change the 8 and 20 to be divided by timing_increase and rounded in directionals
-        if left_pressed: # pulse once, and every 8th frame after 20 frames
+        if left_pressed and not disable_input: # pulse once, and every 8th frame after 15 frames
             left_count += 1
             if left_count == 1:
                 move_left = True
-            elif left_count >= 15 and left_count % 5 == 0:
+            elif left_count >= round((1/timing_increase) * 15) and left_count % round((1/timing_increase) * 5) == 0:
                 move_left = True
             else:
                 move_left = False
         else:
-            left_count = 0
+            if not disable_input:
+                left_count = 0
             move_left = False
         
-        if right_pressed: # pulse once, and every 8th frame after 20 frames
+        if right_pressed and not disable_input:
             right_count += 1
             if right_count == 1:
                 move_right = True
-            elif right_count >= 15 and right_count % 5 == 0:
+            elif right_count >= round((1/timing_increase) * 15) and right_count % round((1/timing_increase) * 5) == 0:
                 move_right = True
             else:
                 move_right = False
         else:
-            right_count = 0
+            if not disable_input:
+                right_count = 0
             move_right = False
         
-        if down_pressed: # pulse once, and every 8th frame after 20 frames
+        if down_pressed and not disable_input:
             down_count += 1
             if down_count == 1:
                 move_down = True
-            elif down_count >= 15 and down_count % 5 == 0:
+            elif down_count >= round((1/timing_increase) * 15) and down_count % round((1/timing_increase) * 5) == 0:
                 move_down = True
             else:
                 move_down = False
         else:
-            down_count = 0
+            if not disable_input:
+                down_count = 0
             move_down = False
 
-        if a_pressed: # only single pulse
+        if a_pressed and not disable_input:
             a_count += 1
             if a_count == 1:
                 move_cc = True
             else:
                 move_cc = False
         else:
-            a_count = 0
+            if not disable_input:
+                a_count = 0
             move_cc = False
 
-        if d_pressed: # only single pulse
+        if d_pressed and not disable_input:
+            score += round((1/timing_increase) * 10)
             d_count += 1
             if d_count == 1:
                 move_c = True
             else:
                 move_c = False
         else:
-            d_count = 0
+            if not disable_input:
+                d_count = 0
             move_c = False
             
-        if space_pressed: # only single pulse
+        if space_pressed and not disable_input:
             space_count += 1
             if space_count == 1:
                 move_qp = True
             else:
                 move_qp = False
         else:
-            space_count = 0
+            if not disable_input:
+                space_count = 0
             move_qp = False
+            
         if move_qp:
             quick_place()
-        if (move_left or move_right or move_down or move_cc or move_c) and not move_qp: # confirm movement
+
+        if auto_lower:
+            move_down = True
+        elif not down_pressed:
+            move_down = False
+        
+        if move_down and not (move_left or move_right):
+            if not test_if_clear(current_piece, (current_piece_location[0] + 1, current_piece_location[1])):
+                confirm_placement(current_piece_location)
+                at_bottom = True
+              
+        if (move_left or move_right or move_down or move_cc or move_c) and not move_qp and not at_bottom: # confirm movement
             move_current_piece(left=move_left,
                                right=move_right,
                                down=move_down,
                                rotate_cc=move_cc,
                                rotate_c=move_c)
-        if move_right:
-            print("moved right")
-        if move_cc:
-            print("rotated counter-clockwise")
-
         if test_rows_filled():
             remove_filled_rows()
+                
+        
         # draw the map
         for i in range(24): # first draw the background; highlight current piece columns
             for j in range(10):
@@ -618,7 +666,10 @@ def main():
                                              color_key[movement_map[i][j]],
                                              [j * tile_size, i * tile_size, tile_size, tile_size])
 
-        # update the frame
+        # update the global variables
+        # < TAG: put all round delays (IE new block placement delay/line deletion delay) HERE
+        since_last_lower += 1
+        at_bottom = False
         pygame.display.update()
         clock.tick(60)
     

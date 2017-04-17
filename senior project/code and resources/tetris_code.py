@@ -463,6 +463,7 @@ def main():
     """ call this function to start the application """
     # global variable declaration
     global since_last_lower
+    global score
     
     # local variables to the game instance
     left_pressed = False
@@ -473,7 +474,7 @@ def main():
     space_pressed = False # quick place
     disable_input = False # for overriding input
     auto_lower = False # used to auto-lower the piece on the board
-    at_bottom = False
+    block_placed = False
         # used for held repetition
     left_count = 0
     right_count = 0
@@ -518,7 +519,6 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                quit()
 
             # test for inputs
             if event.type == pygame.KEYDOWN:
@@ -632,9 +632,9 @@ def main():
         
         if move_down and not test_if_clear(current_piece, (current_piece_location[0] + 1, current_piece_location[1])): # block for placing low blocks
             confirm_placement(current_piece_location)
-            at_bottom = True
+            block_placed = True
               
-        if (move_left or move_right or move_down or move_cc or move_c) and not move_qp and not at_bottom: # confirm movement
+        if (move_left or move_right or move_down or move_cc or move_c) and not move_qp and not block_placed: # confirm movement
             move_current_piece(left=move_left,
                                right=move_right,
                                down=move_down,
@@ -644,7 +644,11 @@ def main():
         if test_rows_filled():
             remove_filled_rows()
                 
-        
+        if block_placed: # resets held repetition time after placement
+            down_count = 0
+            left_count = 0
+            right_count = 0
+            
         # draw the map
         for i in range(24): # first draw the background; highlight current piece columns
             for j in range(10):
@@ -673,7 +677,7 @@ def main():
         # update the global variables
         # < TAG: put all round delays (IE new block placement delay/line deletion delay) HERE
         since_last_lower += 1
-        at_bottom = False
+        block_placed = False
         pygame.display.update()
         clock.tick(60)
     

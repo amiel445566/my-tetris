@@ -643,11 +643,6 @@ def main():
         
         if test_rows_filled():
             remove_filled_rows()
-                
-        if block_placed: # resets held repetition time after placement
-            down_count = 0
-            left_count = 0
-            right_count = 0
             
         # draw the map
         for i in range(24): # first draw the background; highlight current piece columns

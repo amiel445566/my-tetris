@@ -250,9 +250,9 @@ def move_current_piece(left=False, down=False, right=False, rotate_cc=False, rot
         if down:
             since_last_lower = 0
         reset_map("movement_map")
-    elif test_if_clear(current_piece,
-                       [current_piece_location[0] + down,
-                        current_piece_location[1]]):
+    elif down and test_if_clear(current_piece,
+                                [current_piece_location[0] + down,
+                                 current_piece_location[1]]):
         secondary_condition = True
         since_last_lower = 0
         reset_map("movement_map")

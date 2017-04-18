@@ -325,7 +325,7 @@ def test_timing():
     global timing_increase
 
     # 0.1 = amount increased, 5 = lines completed before amount increased applies
-    timing_increase = 1.0 + 0.1 * floor(lines_completed / 5)
+    timing_increase = round(1.0 + 0.1 * floor(lines_completed / 5), 1)
     
 ##############################################################################################
 ############################## GLOBAL MODIFICATION ###########################################

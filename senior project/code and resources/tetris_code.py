@@ -165,8 +165,13 @@ lines_completed = 0 # used to calculate timing increase, and is also a display s
 timing_increase = 1.0 # used to increase game speed over time (after n lines completed or something)
 score = 0 # score added by scattered functions throughout (see the outline)
 since_last_lower = 0 # used to determine whether or not to automatically lower the current piece
+    # NOTE: game failure and quit are different because failure handles the logic and quit handles the frame state
+game_failure = False # used by functions to determine game failure
+game_quit = False # used internally by main to handle game failure and game exiting
     # display variables
-display_width = 200
+left_map_size = 96
+right_map_size = left_map_size # duplicated for semantics
+display_width = 200 + left_map_size + right_map_size # middle map size + edge sizes
 display_height = 480
 tile_size = 20 # size of each grid space
     # display initializations
@@ -204,6 +209,7 @@ def place_movement_piece(piece, map_index_list, update_current_piece=False):
     a modified version of the piece and updating is needed"""
     global current_piece
     global current_piece_location
+    global game_failure
 
     if test_if_clear(piece, map_index_list):
         current_piece_location = deepcopy(map_index_list)
@@ -213,7 +219,7 @@ def place_movement_piece(piece, map_index_list, update_current_piece=False):
             for j in range(len(piece[i])):
                 movement_map[map_index_list[0] + i][map_index_list[1] + j] = piece[i][j]
     else: # PLACE CODE FOR FAILURE HERE, IE placing at the index is blocked
-        main() # TAG: configure this more appropriately later; restarts game
+        game_failure = True
 
 def shift_row_down(row_index):
     """ takes the given row index and shifts the row down
@@ -235,10 +241,8 @@ def move_current_piece(left=False, down=False, right=False, rotate_cc=False, rot
     
     # first, deal with duplicate and opposite directions
     if left and right:
-        print("can't move left AND right, failed to move")
         return None
     elif rotate_c and rotate_cc:
-        print("can't rotate left AND right, failed to rotate")
         return None
     
     # second, clear the map
@@ -325,10 +329,10 @@ def test_timing():
     global timing_increase
 
     # 0.1 = amount increased, 5 = lines completed before amount increased applies
-    timing_increase = round(1.0 + 0.1 * floor(lines_completed / 5), 1)
+    timing_increase = round(1.0 + 0.1 * floor(lines_completed / 2), 1)
     
 ##############################################################################################
-############################## GLOBAL MODIFICATION ###########################################
+################################# MAP MODIFICATION ###########################################
 def confirm_placement(map_index_list):
     """ places the current piece onto the placement map """
 
@@ -459,12 +463,15 @@ def reset_variable(var_name="all"):
           this just gives me a framework to work off of """
 
 # define the function for looping
-def main():
+def game_state():
     """ call this function to start the application """
     # global variable declaration
     global since_last_lower
     global score
-    
+    global left_map_size
+    global right_map_size
+    global game_failure
+    global game_quit
     # local variables to the game instance
     left_pressed = False
     right_pressed = False
@@ -474,7 +481,8 @@ def main():
     space_pressed = False # quick place
     disable_input = False # for overriding input
     auto_lower = False # used to auto-lower the piece on the board
-    block_placed = False
+    block_placed = False # used to initiate events when block is in the placed pulse state
+    game_failure = False # handles the state of the current game instance
         # used for held repetition
     left_count = 0
     right_count = 0
@@ -482,7 +490,6 @@ def main():
     a_count = 0
     d_count = 0
     space_count = 0
-    
         # used for confirmation of movement
     move_left = False
     move_right = False
@@ -491,8 +498,6 @@ def main():
     move_cc = False
     move_qp = False # move quick place
 
-    # add a menu in later
-    
     # reset all variables
     reset_map("all")
     reset_variable()
@@ -507,7 +512,7 @@ def main():
         place_movement_piece(current_piece, [0, 3])
 
     # begin game loop
-    while True:
+    while not game_failure and not game_quit:
         # use auto-advancement before anything else to ensure input disable upon auto-advance
         if since_last_lower == round((1/timing_increase) * 60): # 60/timing_increase = frames till auto advance
             disable_input = True
@@ -518,6 +523,7 @@ def main():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                game_quit = True
                 pygame.quit()
 
             # test for inputs
@@ -553,7 +559,7 @@ def main():
             left_count += 1 # count used for held input repetition
             if left_count == 1:
                 move_left = True # moves if input is initially pulsed
-            elif left_count >= round((1/timing_increase) * 15) and left_count % round((1/timing_increase) * 5) == 0:
+            elif left_count >= max(round((1/timing_increase) * 20), 5) and left_count % round((1/timing_increase) * 10) == 0:
                 move_left = True # moves if input is repeated after held time (scaled to timing increase)
             else:
                 move_left = False # fails to fall in cycle timings
@@ -566,7 +572,7 @@ def main():
             right_count += 1
             if right_count == 1:
                 move_right = True
-            elif right_count >= round((1/timing_increase) * 15) and right_count % round((1/timing_increase) * 5) == 0:
+            elif right_count >= max(round((1/timing_increase) * 20), 5) and right_count % round((1/timing_increase) * 10) == 0:
                 move_right = True
             else:
                 move_right = False
@@ -579,7 +585,7 @@ def main():
             down_count += 1
             if down_count == 1:
                 move_down = True
-            elif down_count >= round((1/timing_increase) * 15) and down_count % round((1/timing_increase) * 5) == 0:
+            elif down_count >= max(round((1/timing_increase) * 20), 5) and down_count % round((1/timing_increase) * 10) == 0:
                 move_down = True
             else:
                 move_down = False
@@ -643,37 +649,41 @@ def main():
         
         if test_rows_filled():
             remove_filled_rows()
+        
+        # draw the screen
+        if not game_quit: # only enters the draw block if the game hasn't been exited (to avoid drawing without a frame to draw in)
+            gameDisplay.fill((255,255,0)) # fallback color in case a pixel is missed; bright color (yellow) used as an error indicator
             
-        # draw the map
-        for i in range(24): # first draw the background; highlight current piece columns
-            for j in range(10):
-                if len(current_piece_location) > 0 and j in range(current_piece_location[1], current_piece_location[1] + len(current_piece[0])):
-                    pygame.draw.rect(gameDisplay,
-                                     color_key[background_pattern[i][j] + 2],
-                                     [j * tile_size, i * tile_size, tile_size, tile_size])
-                else:
-                    pygame.draw.rect(gameDisplay,
-                                     color_key[background_pattern[i][j]],
-                                     [j * tile_size, i * tile_size, tile_size, tile_size])
-        for i in range(24): # next draw both maps on top
-            for j in range(10):
-                for k in range(2): # k used to alternate between placement_map and movement_map
-                    if k == 0:
-                        if placement_map[i][j] != 0:
-                            pygame.draw.rect(gameDisplay,
-                                             color_key[placement_map[i][j]],
-                                             [j * tile_size, i * tile_size, tile_size, tile_size])
+            for i in range(24): # first draw the background; highlight current piece columns
+                for j in range(10):
+                    if len(current_piece_location) > 0 and j in range(current_piece_location[1], current_piece_location[1] + len(current_piece[0])):
+                        pygame.draw.rect(gameDisplay,
+                                         color_key[background_pattern[i][j] + 2],
+                                         [j * tile_size + left_map_size, i * tile_size, tile_size, tile_size])
                     else:
-                        if movement_map[i][j] != 0:
-                            pygame.draw.rect(gameDisplay,
-                                             color_key[movement_map[i][j]],
-                                             [j * tile_size, i * tile_size, tile_size, tile_size])
+                        pygame.draw.rect(gameDisplay,
+                                         color_key[background_pattern[i][j]],
+                                         [j * tile_size + left_map_size, i * tile_size, tile_size, tile_size])
+            for i in range(24): # next draw both maps on top
+                for j in range(10):
+                    for k in range(2): # k used to alternate between placement_map and movement_map
+                        if k == 0:
+                            if placement_map[i][j] != 0:
+                                pygame.draw.rect(gameDisplay,
+                                                 color_key[placement_map[i][j]],
+                                                 [j * tile_size + left_map_size, i * tile_size, tile_size, tile_size])
+                        else:
+                            if movement_map[i][j] != 0:
+                                pygame.draw.rect(gameDisplay,
+                                                 color_key[movement_map[i][j]],
+                                                 [j * tile_size + left_map_size, i * tile_size, tile_size, tile_size])
+            pygame.display.update()
 
         # update the global variables
         # < TAG: put all round delays (IE new block placement delay/line deletion delay) HERE
         since_last_lower += 1
         block_placed = False
-        pygame.display.update()
         clock.tick(60)
     
-main()
+while not game_quit:
+    game_state()

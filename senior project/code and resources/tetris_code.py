@@ -169,9 +169,10 @@ since_last_lower = 0 # used to determine whether or not to automatically lower t
 game_failure = False # used by functions to determine game failure
 game_quit = False # used internally by main to handle game failure and game exiting
     # display variables
-left_map_size = 96
-right_map_size = left_map_size # duplicated for semantics
-display_width = 200 + left_map_size + right_map_size # middle map size + edge sizes
+left_map_width = 96
+center_map_width = 200
+right_map_width = left_map_width # duplicated for semantics
+display_width = center_map_width + left_map_width + right_map_width # middle map size + edge sizes
 display_height = 480
 tile_size = 20 # size of each grid space
     # display initializations
@@ -470,8 +471,8 @@ def game_state():
     # global variable declaration
     global since_last_lower
     global score
-    global left_map_size
-    global right_map_size
+    global left_map_width
+    global right_map_width
     global game_failure
     global game_quit
     # local variables to the game instance
@@ -657,9 +658,6 @@ def game_state():
         if block_placed: # this block activates only after a placement
             if test_rows_filled():
                 remove_filled_rows()
-            #### DEBUG BLOCK; FOR DEBUG, REMOVE LATER
-            print("score: " + str(score) + ", lines completed: " + str(lines_completed) + ", timing increase: " + str(timing_increase))
-            ####
         
         # draw the screen
         if not game_quit: # only enters the draw block if the game hasn't been exited (to avoid drawing without a frame to draw in)
@@ -670,11 +668,11 @@ def game_state():
                     if len(current_piece_location) > 0 and j in range(current_piece_location[1], current_piece_location[1] + len(current_piece[0])):
                         pygame.draw.rect(gameDisplay,
                                          color_key[background_pattern[i][j] + 2],
-                                         [j * tile_size + left_map_size, i * tile_size, tile_size, tile_size])
+                                         [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
                     else:
                         pygame.draw.rect(gameDisplay,
                                          color_key[background_pattern[i][j]],
-                                         [j * tile_size + left_map_size, i * tile_size, tile_size, tile_size])
+                                         [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
             for i in range(24): # next draw both maps on top
                 for j in range(10):
                     for k in range(2): # k used to alternate between placement_map and movement_map
@@ -682,15 +680,16 @@ def game_state():
                             if placement_map[i][j] != 0:
                                 pygame.draw.rect(gameDisplay,
                                                  color_key[placement_map[i][j]],
-                                                 [j * tile_size + left_map_size, i * tile_size, tile_size, tile_size])
+                                                 [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
                         else:
                             if movement_map[i][j] != 0:
                                 pygame.draw.rect(gameDisplay,
                                                  color_key[movement_map[i][j]],
-                                                 [j * tile_size + left_map_size, i * tile_size, tile_size, tile_size])
-            
-            gameDisplay.blit(score_header_text.render("Score", False, white), (0,0))
-            gameDisplay.blit(score_var_text.render(str(score), False, white), (0, 30))
+                                                 [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
+            score_header_text_rendered = score_header_text.render("Score", False, white)
+            gameDisplay.blit(score_header_text_rendered, (left_map_width/2 - score_header_text_rendered.get_rect().width/2 + (left_map_width + center_map_width), 0))
+            previous_height = (score_header_text_rendered.get_rect().height)
+            gameDisplay.blit(score_var_text.render(str(score), False, white), (left_map_width + center_map_width + 5, previous_height))
             pygame.display.update()
 
         # update the global variables

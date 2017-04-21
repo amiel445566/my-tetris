@@ -372,7 +372,7 @@ def remove_filled_rows():
     
     rows_filled = test_rows_filled()
     lines_completed += len(rows_filled)
-    score += (len(rows_filled) ** 2) * 10 * timing_increase # score += 10t(n^2), t = timing, n = rows
+    score += round((len(rows_filled) ** 2) * 10 * timing_increase) # score += 10t(n^2), t = timing, n = rows
 
     for i in range(len(test_rows_filled())): # empty filled rows
         placement_map[rows_filled[i]] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -499,6 +499,9 @@ def game_state():
     move_c = False
     move_cc = False
     move_qp = False # move quick place
+        # text objects
+    score_header_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
+    score_var_text = pygame.font.Font("Font(s)\Pixeled.ttf", 12)
 
     # reset all variables
     reset_map("all")
@@ -660,7 +663,7 @@ def game_state():
         
         # draw the screen
         if not game_quit: # only enters the draw block if the game hasn't been exited (to avoid drawing without a frame to draw in)
-            gameDisplay.fill((30 ,30 ,30 )) # fallback color in case a pixel is missed; bright color (yellow) used as an error indicator
+            gameDisplay.fill((30 ,30 ,30 )) # default background color
             
             for i in range(24): # first draw the background; highlight current piece columns
                 for j in range(10):
@@ -685,6 +688,9 @@ def game_state():
                                 pygame.draw.rect(gameDisplay,
                                                  color_key[movement_map[i][j]],
                                                  [j * tile_size + left_map_size, i * tile_size, tile_size, tile_size])
+            
+            gameDisplay.blit(score_header_text.render("Score", False, white), (0,0))
+            gameDisplay.blit(score_var_text.render(str(score), False, white), (0, 30))
             pygame.display.update()
 
         # update the global variables

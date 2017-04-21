@@ -428,6 +428,8 @@ def reset_variable(var_name="all"):
     global next_pieces
     global timing_increase
     global score
+    global since_last_lower
+    global lines_completed
 
     value_reset = False
     
@@ -559,7 +561,7 @@ def game_state():
             left_count += 1 # count used for held input repetition
             if left_count == 1:
                 move_left = True # moves if input is initially pulsed
-            elif left_count >= max(round((1/1+(1-timing_increase)/5) * 20), 15) and left_count % round((1/1+(1-timing_increase)/5) * 10) == 0:
+            elif left_count >= max(round((1/1+(timing_increase-1)/5) * 20), 15) and left_count % round((1/1+(1-timing_increase)/5) * 10) == 0:
                 move_left = True # moves if input is repeated after held time (scaled to timing increase)
             else:
                 move_left = False # fails to fall in cycle timings
@@ -572,7 +574,7 @@ def game_state():
             right_count += 1
             if right_count == 1:
                 move_right = True
-            elif right_count >= max(round((1/1+(1-timing_increase)/5) * 20), 15) and right_count % round((1/1+(1-timing_increase)/5) * 10) == 0:
+            elif right_count >= max(round((1/1+(timing_increase-1)/5) * 20), 15) and right_count % round((1/1+(1-timing_increase)/5) * 10) == 0:
                 move_right = True
             else:
                 move_right = False
@@ -585,8 +587,10 @@ def game_state():
             down_count += 1
             if down_count == 1:
                 move_down = True
-            elif down_count >= max(round((1/1+(1-timing_increase)/5) * 20), 15) and down_count % round((1/1+(1-timing_increase)/5) * 10) == 0:
+                score += round((1/timing_increase) * 10) # score is based on speed scale with base unit of 10
+            elif down_count >= max(round((1/1+(timing_increase-1)/5) * 20), 15) and down_count % round((1/1+(1-timing_increase)/5) * 10) == 0:
                 move_down = True
+                score += round((1/timing_increase) * 10)
             else:
                 move_down = False
         else:
@@ -606,7 +610,6 @@ def game_state():
             move_cc = False
 
         if d_pressed and not disable_input: # see left
-            score += round((1/timing_increase) * 10) # score is based on speed scale with base unit of 10
             d_count += 1
             if d_count == 1:
                 move_c = True
@@ -630,6 +633,7 @@ def game_state():
             
         if move_qp:
             quick_place()
+            block_placed = True
 
         if auto_lower: # "n" cycles passed, auto_lower activated
             move_down = True
@@ -647,12 +651,16 @@ def game_state():
                                rotate_cc=move_cc,
                                rotate_c=move_c)
         
-        if test_rows_filled():
-            remove_filled_rows()
+        if block_placed: # this block activates only after a placement
+            if test_rows_filled():
+                remove_filled_rows()
+            #### DEBUG BLOCK; FOR DEBUG, REMOVE LATER
+            print("score: " + str(score) + ", lines completed: " + str(lines_completed) + ", timing increase: " + str(timing_increase))
+            ####
         
         # draw the screen
         if not game_quit: # only enters the draw block if the game hasn't been exited (to avoid drawing without a frame to draw in)
-            gameDisplay.fill((255,255,0)) # fallback color in case a pixel is missed; bright color (yellow) used as an error indicator
+            gameDisplay.fill((30 ,30 ,30 )) # fallback color in case a pixel is missed; bright color (yellow) used as an error indicator
             
             for i in range(24): # first draw the background; highlight current piece columns
                 for j in range(10):

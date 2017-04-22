@@ -503,6 +503,8 @@ def game_state():
         # text objects
     score_header_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
     score_var_text = pygame.font.Font("Font(s)\Pixeled.ttf", 12)
+    timing_header_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
+    timing_var_text = pygame.font.Font("Font(s)\Pixeled.ttf", 12)
 
     # reset all variables
     reset_map("all")
@@ -686,10 +688,23 @@ def game_state():
                                 pygame.draw.rect(gameDisplay,
                                                  color_key[movement_map[i][j]],
                                                  [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
+            # text displays
+                # map constants
+            right_starting_width = left_map_width + center_map_width
+                # text rendering
             score_header_text_rendered = score_header_text.render("Score", False, white)
-            gameDisplay.blit(score_header_text_rendered, (left_map_width/2 - score_header_text_rendered.get_rect().width/2 + (left_map_width + center_map_width), 0))
+            score_var_text_rendered = score_var_text.render(str(score), False, white)
+            timing_header_text_rendered = timing_header_text.render("Speed", False, white)
+            timing_var_text_rendered = timing_var_text.render(str(timing_increase) + "x", False, white)
+                # placing rendered text on map
+            gameDisplay.blit(score_header_text_rendered, (left_map_width/2 - score_header_text_rendered.get_rect().width/2 + right_starting_width, 0))
             previous_height = (score_header_text_rendered.get_rect().height)
-            gameDisplay.blit(score_var_text.render(str(score), False, white), (left_map_width + center_map_width + 5, previous_height))
+            gameDisplay.blit(score_var_text_rendered, (right_starting_width + 5, previous_height))
+            previous_height += score_var_text_rendered.get_rect().height
+            gameDisplay.blit(timing_header_text_rendered, ((left_map_width/2 - timing_header_text_rendered.get_rect().width/2) + right_starting_width, previous_height))
+            previous_height += timing_header_text_rendered.get_rect().height
+            gameDisplay.blit(timing_var_text_rendered, (right_starting_width + 5, previous_height))
+            
             pygame.display.update()
 
         # update the global variables

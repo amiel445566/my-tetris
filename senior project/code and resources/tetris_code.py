@@ -169,12 +169,12 @@ since_last_lower = 0 # used to determine whether or not to automatically lower t
 game_failure = False # used by functions to determine game failure
 game_quit = False # used internally by main to handle game failure and game exiting
     # display variables
-left_map_width = 96
-center_map_width = 200
+left_map_width = 120
+center_map_width = 250
 right_map_width = left_map_width # duplicated for semantics
 display_width = center_map_width + left_map_width + right_map_width # middle map size + edge sizes
-display_height = 480
-tile_size = 20 # size of each grid space
+display_height = 600
+tile_size = 25 # size of each grid space
     # display initializations
 pygame.init()
 gameDisplay = pygame.display.set_mode((display_width, display_height))
@@ -501,10 +501,16 @@ def game_state():
     move_cc = False
     move_qp = False # move quick place
         # text objects
-    score_header_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
-    score_var_text = pygame.font.Font("Font(s)\Pixeled.ttf", 12)
-    timing_header_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
-    timing_var_text = pygame.font.Font("Font(s)\Pixeled.ttf", 12)
+    score_header_text = pygame.font.Font("Font(s)\Pixeled.ttf", 20)
+    score_var_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
+    timing_header_text = pygame.font.Font("Font(s)\Pixeled.ttf", 20)
+    timing_var_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
+    lines_completed_header_text = pygame.font.Font("Font(s)\Pixeled.ttf", 8)
+    lines_completed_var_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
+        # static renders (not in loop because text is nonchanging)
+    score_header_text_rendered = score_header_text.render("Score", False, white)
+    timing_header_text_rendered = timing_header_text.render("Speed", False, white)
+    lines_completed_header_text_rendered = lines_completed_header_text.render("Lines Completed", False, white)
 
     # reset all variables
     reset_map("all")
@@ -692,18 +698,22 @@ def game_state():
                 # map constants
             right_starting_width = left_map_width + center_map_width
                 # text rendering
-            score_header_text_rendered = score_header_text.render("Score", False, white)
             score_var_text_rendered = score_var_text.render(str(score), False, white)
-            timing_header_text_rendered = timing_header_text.render("Speed", False, white)
             timing_var_text_rendered = timing_var_text.render(str(timing_increase) + "x", False, white)
+            lines_completed_var_text_rendered = lines_completed_var_text.render(str(lines_completed), False, white)
                 # placing rendered text on map
-            gameDisplay.blit(score_header_text_rendered, (left_map_width/2 - score_header_text_rendered.get_rect().width/2 + right_starting_width, 0))
+            gameDisplay.blit(score_header_text_rendered, (right_map_width/2 - score_header_text_rendered.get_rect().width/2 + right_starting_width, 0))
             previous_height = (score_header_text_rendered.get_rect().height)
             gameDisplay.blit(score_var_text_rendered, (right_starting_width + 5, previous_height))
             previous_height += score_var_text_rendered.get_rect().height
-            gameDisplay.blit(timing_header_text_rendered, ((left_map_width/2 - timing_header_text_rendered.get_rect().width/2) + right_starting_width, previous_height))
-            previous_height += timing_header_text_rendered.get_rect().height
+            gameDisplay.blit(timing_header_text_rendered, ((right_map_width/2 - timing_header_text_rendered.get_rect().width/2) + right_starting_width, previous_height + 30))
+            previous_height += timing_header_text_rendered.get_rect().height + 30
             gameDisplay.blit(timing_var_text_rendered, (right_starting_width + 5, previous_height))
+            previous_height += timing_var_text_rendered.get_rect().height
+            gameDisplay.blit(lines_completed_header_text_rendered, (right_map_width/2 - lines_completed_header_text_rendered.get_rect().width/2 + right_starting_width, previous_height + 30))
+            previous_height += lines_completed_header_text_rendered.get_rect().height + 30
+            gameDisplay.blit(lines_completed_var_text_rendered, (right_starting_width + 5, previous_height))
+            previous_height += lines_completed_var_text_rendered.get_rect().height
             
             pygame.display.update()
 

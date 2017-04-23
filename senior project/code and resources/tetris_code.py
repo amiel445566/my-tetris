@@ -97,6 +97,15 @@ empty_map = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ]
 
+next_pieces_background_pattern = [
+    [8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8],
+    [8, 9, 8, 9, 8, 9],
+    [9, 8, 9, 8, 9, 8]
+    ]
+
 # initialize maps
 placement_map = deepcopy(empty_map)
 movement_map = deepcopy(empty_map)
@@ -175,6 +184,7 @@ right_map_width = left_map_width # duplicated for semantics
 display_width = center_map_width + left_map_width + right_map_width # middle map size + edge sizes
 display_height = 600
 tile_size = 25 # size of each grid space
+next_piece_tile_size = 15
     # display initializations
 pygame.init()
 gameDisplay = pygame.display.set_mode((display_width, display_height))
@@ -358,9 +368,7 @@ def confirm_placement(map_index_list):
         # place next piece; avoids conflicts/logical latency with the display
         if len(current_piece[0]) == 2:
             place_movement_piece(current_piece, [0, 4])
-        if len(current_piece[0]) == 3:
-            place_movement_piece(current_piece, [0, 3])
-        if len(current_piece[0]) == 4:
+        else:
             place_movement_piece(current_piece, [0, 3])
     else: # PLACE CODE FOR FAILURE HERE, EG place piece if the main loop is blocked when placing below
         print("else block reached in confirm_placement") # FOR DEBUG, REMOVE LATER
@@ -507,10 +515,12 @@ def game_state():
     timing_var_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
     lines_completed_header_text = pygame.font.Font("Font(s)\Pixeled.ttf", 8)
     lines_completed_var_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
+    next_header_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
         # static renders (not in loop because text is nonchanging)
     score_header_text_rendered = score_header_text.render("Score", False, white)
     timing_header_text_rendered = timing_header_text.render("Speed", False, white)
     lines_completed_header_text_rendered = lines_completed_header_text.render("Lines Completed", False, white)
+    next_header_text_rendered = next_header_text.render("Next", False, white)
 
     # reset all variables
     reset_map("all")
@@ -520,9 +530,7 @@ def game_state():
     # place the first piece into the map
     if len(current_piece[0]) == 2:
         place_movement_piece(current_piece, [0, 4])
-    if len(current_piece[0]) == 3:
-        place_movement_piece(current_piece, [0, 3])
-    if len(current_piece[0]) == 4:
+    else:
         place_movement_piece(current_piece, [0, 3])
 
     # begin game loop
@@ -668,7 +676,7 @@ def game_state():
                 remove_filled_rows()
         
         # draw the screen
-        if not game_quit: # only enters the draw block if the game hasn't been exited (to avoid drawing without a frame to draw in)
+        if not game_quit and not game_failure: # only enters the draw block if the game hasn't been exited (to avoid drawing without a frame to draw in)
             gameDisplay.fill((30 ,30 ,30 )) # default background color
             
             for i in range(24): # first draw the background; highlight current piece columns
@@ -694,7 +702,69 @@ def game_state():
                                 pygame.draw.rect(gameDisplay,
                                                  color_key[movement_map[i][j]],
                                                  [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
-            # text displays
+            # left side (next piece displays)
+            np_amt = 3
+            np_w = 6
+            np_h = 6
+            
+            for i in range(np_amt):
+                for j in range(np_h):
+                    for k in range(np_w):
+                        if len(next_pieces[::-1][i][0]) == 2 and (j-2 in range(2) and k-2 in range(2)) and next_pieces[::-1][i][j - 2][k - 2] != 0:
+                            if i is not max(range(np_amt)):
+                                pygame.draw.rect(gameDisplay,
+                                                 color_key[next_pieces[::-1][i][j-2][k-2]],
+                                                 [(k + 1) * next_piece_tile_size,
+                                                  ((j + 1) + i * 7) * next_piece_tile_size,
+                                                  next_piece_tile_size, next_piece_tile_size])
+                            else:
+                                pygame.draw.rect(gameDisplay,
+                                                 color_key[next_pieces[::-1][i][j-2][k-2]],
+                                                 [(k + 1) * next_piece_tile_size,
+                                                  ((j + 1) + i * 7 + 2) * next_piece_tile_size,
+                                                  next_piece_tile_size, next_piece_tile_size])
+                        elif len(next_pieces[::-1][i][0]) == 3 and (j-2 in range(2) and k-1 in range(3)) and next_pieces[::-1][i][j - 2][k - 1] != 0:
+                            if i is not max(range(np_amt)):
+                                pygame.draw.rect(gameDisplay,
+                                                 color_key[next_pieces[::-1][i][j-2][k-1]],
+                                                 [(k + 1) * next_piece_tile_size,
+                                                  ((j + 1) + i * 7) * next_piece_tile_size,
+                                                  next_piece_tile_size, next_piece_tile_size])
+                            else:
+                                pygame.draw.rect(gameDisplay,
+                                                 color_key[next_pieces[::-1][i][j-2][k-1]],
+                                                 [(k + 1) * next_piece_tile_size,
+                                                  ((j + 1) + i * 7 + 2) * next_piece_tile_size,
+                                                  next_piece_tile_size, next_piece_tile_size])
+                        elif len(next_pieces[::-1][i][0]) == 4 and (j-2 in range(1) and k-1 in range(4)) and next_pieces[::-1][i][j - 2][k - 1] != 0:
+                            if i is not max(range(np_amt)):
+                                pygame.draw.rect(gameDisplay,
+                                                     color_key[next_pieces[::-1][i][j-2][k-1]],
+                                                     [(k + 1) * next_piece_tile_size,
+                                                      ((j + 1) + i * 7) * next_piece_tile_size,
+                                                      next_piece_tile_size, next_piece_tile_size])
+                            else:
+                                pygame.draw.rect(gameDisplay,
+                                             color_key[next_pieces[::-1][i][j-2][k-1]],
+                                             [(k + 1) * next_piece_tile_size,
+                                              ((j + 1) + i * 7 + 2) * next_piece_tile_size,
+                                              next_piece_tile_size, next_piece_tile_size])
+                        else:
+                            if i is not max(range(np_amt)):
+                                pygame.draw.rect(gameDisplay,
+                                                     color_key[next_pieces_background_pattern[j][k]],
+                                                     [(k + 1) * next_piece_tile_size,
+                                                      ((j + 1) + i * 7) * next_piece_tile_size,
+                                                      next_piece_tile_size, next_piece_tile_size])
+                            else:
+                                pygame.draw.rect(gameDisplay,
+                                                 color_key[next_pieces_background_pattern[j][k]],
+                                                 [(k + 1) * next_piece_tile_size,
+                                                  ((j + 1) + i * 7 + 2) * next_piece_tile_size,
+                                                  next_piece_tile_size, next_piece_tile_size])
+                                
+            gameDisplay.blit(next_header_text_rendered, (left_map_width/2 - next_header_text_rendered.get_rect().width/2, 225))
+            # right side (text displays)
                 # map constants
             right_starting_width = left_map_width + center_map_width
                 # dynamic text rendering (because this text constantly changes
@@ -706,12 +776,12 @@ def game_state():
             previous_height = (score_header_text_rendered.get_rect().height)
             gameDisplay.blit(score_var_text_rendered, (right_starting_width + 5, previous_height))
             previous_height += score_var_text_rendered.get_rect().height
-            gameDisplay.blit(timing_header_text_rendered, ((right_map_width/2 - timing_header_text_rendered.get_rect().width/2) + right_starting_width, previous_height + 30))
-            previous_height += timing_header_text_rendered.get_rect().height + 30
+            gameDisplay.blit(timing_header_text_rendered, ((right_map_width/2 - timing_header_text_rendered.get_rect().width/2) + right_starting_width, previous_height + 40))
+            previous_height += timing_header_text_rendered.get_rect().height + 40
             gameDisplay.blit(timing_var_text_rendered, (right_starting_width + 5, previous_height))
             previous_height += timing_var_text_rendered.get_rect().height
-            gameDisplay.blit(lines_completed_header_text_rendered, (right_map_width/2 - lines_completed_header_text_rendered.get_rect().width/2 + right_starting_width, previous_height + 30))
-            previous_height += lines_completed_header_text_rendered.get_rect().height + 30
+            gameDisplay.blit(lines_completed_header_text_rendered, (right_map_width/2 - lines_completed_header_text_rendered.get_rect().width/2 + right_starting_width, previous_height + 40))
+            previous_height += lines_completed_header_text_rendered.get_rect().height + 40
             gameDisplay.blit(lines_completed_var_text_rendered, (right_starting_width + 5, previous_height))
             previous_height += lines_completed_var_text_rendered.get_rect().height
             

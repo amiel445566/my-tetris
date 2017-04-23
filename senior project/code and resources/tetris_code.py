@@ -697,7 +697,7 @@ def game_state():
             # text displays
                 # map constants
             right_starting_width = left_map_width + center_map_width
-                # text rendering
+                # dynamic text rendering (because this text constantly changes
             score_var_text_rendered = score_var_text.render(str(score), False, white)
             timing_var_text_rendered = timing_var_text.render(str(timing_increase) + "x", False, white)
             lines_completed_var_text_rendered = lines_completed_var_text.render(str(lines_completed), False, white)

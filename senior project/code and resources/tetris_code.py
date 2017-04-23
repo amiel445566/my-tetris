@@ -132,11 +132,11 @@ pieces = [
 black                = (0  ,0  ,0  )
 white                = (255,255,255)
 red                  = (255,0  ,0  )
-green                = (0  ,255,0  )
+green                = (0  ,200,0  )
 blue                 = (80 ,80 ,255)
 orange               = (255,165,0  )
 cyan                 = (0  ,255,255)
-purple               = (188,65 ,234)
+yellow_green         = (155,255,0  )
 pink                 = (255,20 ,147)
 light_gray           = (50 ,50 ,50 )
 dark_gray            = (40 ,40 ,40 )
@@ -150,7 +150,7 @@ color_key = {
     3:green,
     4:orange,
     5:cyan,
-    6:purple,
+    6:yellow_green,
     7:pink,
     8:light_gray,
     9:dark_gray,
@@ -329,8 +329,8 @@ def test_timing():
     global lines_completed
     global timing_increase
 
-    # 0.1 = amount increased, 5 = lines completed before amount increased applies
-    timing_increase = round(1.0 + 0.1 * floor(lines_completed / 2), 1)
+    # 0.1 = amount increased, 3 = lines completed before amount increased applies
+    timing_increase = round(1.0 + 0.1 * floor(lines_completed / 3), 1)
     
 ##############################################################################################
 ################################# MAP MODIFICATION ###########################################

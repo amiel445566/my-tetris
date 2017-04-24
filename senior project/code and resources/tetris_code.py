@@ -490,10 +490,12 @@ def game_state():
     a_pressed = False # rotate counterclockwise
     d_pressed = False # rotate clockwise
     space_pressed = False # quick place
+    escape_pressed = False # pause
     disable_input = False # for overriding input
     auto_lower = False # used to auto-lower the piece on the board
     block_placed = False # used to initiate events when block is in the placed pulse state
     game_failure = False # handles the state of the current game instance
+    tick_rate = 60 # gives the framerate of the game
         # used for held repetition
     left_count = 0
     right_count = 0
@@ -501,6 +503,7 @@ def game_state():
     a_count = 0
     d_count = 0
     space_count = 0
+    escape_count = 0
         # used for confirmation of movement
     move_left = False
     move_right = False
@@ -552,30 +555,34 @@ def game_state():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_KP4:
                     left_pressed = True
-                if event.key == pygame.K_KP6:
+                elif event.key == pygame.K_KP6:
                     right_pressed = True
-                if event.key == pygame.K_KP5:
+                elif event.key == pygame.K_KP5:
                     down_pressed = True
-                if event.key == pygame.K_a:
+                elif event.key == pygame.K_a:
                     a_pressed = True
-                if event.key == pygame.K_d:
+                elif event.key == pygame.K_d:
                     d_pressed = True
-                if event.key == pygame.K_SPACE:
+                elif event.key == pygame.K_SPACE:
                     space_pressed = True
+                elif event.key == pygame.K_ESCAPE:
+                    escape_pressed = True
             # remove boolean if key is let go
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_KP4:
                     left_pressed = False
-                if event.key == pygame.K_KP6:
+                elif event.key == pygame.K_KP6:
                     right_pressed = False
-                if event.key == pygame.K_KP5:
+                elif event.key == pygame.K_KP5:
                     down_pressed = False
-                if event.key == pygame.K_a:
+                elif event.key == pygame.K_a:
                     a_pressed = False
-                if event.key == pygame.K_d:
+                elif event.key == pygame.K_d:
                     d_pressed = False
-                if event.key == pygame.K_SPACE:
+                elif event.key == pygame.K_SPACE:
                     space_pressed = False
+                elif event.key == pygame.K_ESCAPE:
+                    escape_pressed = False
         
         if left_pressed and not disable_input: # if key is pressed and if the input keys are not disabled
             left_count += 1 # count used for held input repetition
@@ -674,6 +681,27 @@ def game_state():
         if block_placed: # this block activates only after a placement
             if test_rows_filled():
                 remove_filled_rows()
+
+        if escape_pressed:
+            escape_count += 1
+        else:
+            escape_count = 0
+    
+        if escape_count == 1: # NOTE: ADD IN QUIT HANDLING HERE AS WELL
+            escape_count = 2
+            while True:
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            escape_count += 1
+                    elif event.type == pygame.KEYUP:
+                        if event.key == pygame.K_ESCAPE:
+                            escape_count = 0
+                if escape_count == 1:
+                    escape_count == 2
+                    break
+            clock.tick(tick_rate)
+            
         
         # draw the screen
         if not game_quit and not game_failure: # only enters the draw block if the game hasn't been exited (to avoid drawing without a frame to draw in)
@@ -791,7 +819,7 @@ def game_state():
         # < TAG: put all round delays (IE new block placement delay/line deletion delay) HERE
         since_last_lower += 1
         block_placed = False
-        clock.tick(60)
+        clock.tick(tick_rate)
     
 while not game_quit:
     game_state()

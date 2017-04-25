@@ -520,12 +520,19 @@ def game_state():
     lines_completed_var_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
     next_header_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
     pause_text = pygame.font.Font("Font(s)\Pixeled.ttf", 40)
+    end_screen_header_text = pygame.font.Font("Font(s)\Pixeled.ttf", 30)
+    end_screen_score_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
+    end_screen_speed_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
+    end_screen_lines_completed_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
+    end_screen_instructions_text = pygame.font.Font("Font(s)\Pixeled.ttf", 10)
         # static renders (not in loop because text is nonchanging)
     score_header_text_rendered = score_header_text.render("Score", False, white)
     timing_header_text_rendered = timing_header_text.render("Speed", False, white)
     lines_completed_header_text_rendered = lines_completed_header_text.render("Lines Completed", False, white)
     next_header_text_rendered = next_header_text.render("Next", False, white)
     pause_text_rendered = pause_text.render("PAUSED", False, white)
+    end_screen_header_text_rendered = end_screen_header_text.render("GAME OVER", False, white)
+    end_screen_instructions_text_rendered = end_screen_instructions_text.render("[press Esc to replay]", False, white)
 
     # reset all variables
     reset_map("all")
@@ -708,13 +715,27 @@ def game_state():
             clock.tick(tick_rate)
 
         if game_failure:
+            end_screen_score_text_rendered = end_screen_score_text.render("Score: " + str(score), False, white)
+            end_screen_speed_text_rendered = end_screen_speed_text.render("Multiplier: " + str(timing_increase) + "x", False, white)
+            end_screen_lines_completed_text_rendered = end_screen_lines_completed_text.render("Lines Completed: " + str(lines_completed), False, white)
+            
             gameDisplay.fill((20 ,20 ,20 ))
+            gameDisplay.blit(end_screen_header_text_rendered, (display_width/2 - end_screen_header_text_rendered.get_rect().width/2, 15))
+            previous_height = 15 + end_screen_header_text_rendered.get_rect().height
+            gameDisplay.blit(end_screen_score_text_rendered, (40, previous_height + 50))
+            previous_height += 50 + end_screen_score_text_rendered.get_rect().height
+            gameDisplay.blit(end_screen_speed_text_rendered, (40, previous_height + 20))
+            previous_height += 20 + end_screen_speed_text_rendered.get_rect().height
+            gameDisplay.blit(end_screen_lines_completed_text_rendered, (40, previous_height + 20))
+            gameDisplay.blit(end_screen_instructions_text_rendered,
+                             (display_width/2 - end_screen_instructions_text_rendered.get_rect().width/2, display_height - (20 + end_screen_instructions_text_rendered.get_rect().height)))
             pygame.display.update()
             ######### TAG: PUT IN STATS HERE AS WELL AS WAIT FOR USER INPUT TO RESTART; POSSIBLY GIVE AN OPTION TO QUIT
             while True:
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
-                        escape_count += 1 # TAG: as of now, escape is the trigger to restart (NOTE, if menu/quit is an option, loop protocol needs to be modified in place_movement_piece)
+                        if event.key == pygame.K_ESCAPE:
+                            escape_count += 1 # TAG: as of now, escape is the trigger to restart (NOTE, if menu/quit is an option, loop protocol needs to be modified in place_movement_piece)
                 if escape_count == 1:
                     break
         

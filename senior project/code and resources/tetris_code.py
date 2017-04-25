@@ -701,9 +701,12 @@ def game_state():
             gameDisplay.fill((0  ,0  ,0  ))
             gameDisplay.blit(pause_text_rendered, (display_width/2 - pause_text_rendered.get_rect().width/2, display_height/2 - pause_text_rendered.get_rect().height/2))
             pygame.display.update()
-            while True:
+            while True and not game_quit:
                 for event in pygame.event.get():
-                    if event.type == pygame.KEYDOWN:
+                    if event.type == pygame.QUIT:
+                            game_quit = True
+                            pygame.quit()
+                    elif event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
                             escape_count += 1
                     elif event.type == pygame.KEYUP:
@@ -712,6 +715,7 @@ def game_state():
                 if escape_count == 1:
                     escape_count == 2
                     break
+                
             clock.tick(tick_rate)
 
         if game_failure:
@@ -732,8 +736,11 @@ def game_state():
                              (display_width/2 - end_screen_instructions_text_rendered.get_rect().width/2, display_height - (20 + end_screen_instructions_text_rendered.get_rect().height)))
             pygame.display.update()
             # block for user input to restart
-            while True:
+            while True and not game_quit:
                 for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                            game_quit = True
+                            pygame.quit()
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
                             escape_count += 1 # TAG: as of now, escape is the trigger to restart (NOTE, if menu/quit is an option, loop protocol needs to be modified in place_movement_piece)

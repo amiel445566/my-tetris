@@ -715,10 +715,11 @@ def game_state():
             clock.tick(tick_rate)
 
         if game_failure:
+            # necessarily calculated text renders
             end_screen_score_text_rendered = end_screen_score_text.render("Score: " + str(score), False, white)
             end_screen_speed_text_rendered = end_screen_speed_text.render("Multiplier: " + str(timing_increase) + "x", False, white)
             end_screen_lines_completed_text_rendered = end_screen_lines_completed_text.render("Lines Completed: " + str(lines_completed), False, white)
-            
+            # end screen displays
             gameDisplay.fill((20 ,20 ,20 ))
             gameDisplay.blit(end_screen_header_text_rendered, (display_width/2 - end_screen_header_text_rendered.get_rect().width/2, 15))
             previous_height = 15 + end_screen_header_text_rendered.get_rect().height
@@ -730,7 +731,7 @@ def game_state():
             gameDisplay.blit(end_screen_instructions_text_rendered,
                              (display_width/2 - end_screen_instructions_text_rendered.get_rect().width/2, display_height - (20 + end_screen_instructions_text_rendered.get_rect().height)))
             pygame.display.update()
-            ######### TAG: PUT IN STATS HERE AS WELL AS WAIT FOR USER INPUT TO RESTART; POSSIBLY GIVE AN OPTION TO QUIT
+            # block for user input to restart
             while True:
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:

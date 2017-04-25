@@ -562,11 +562,11 @@ def game_state():
 
             # test for inputs
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_KP4:
+                if event.key == pygame.K_KP4 or event.key == pygame.K_LEFT:
                     left_pressed = True
-                elif event.key == pygame.K_KP6:
+                elif event.key == pygame.K_KP6 or event.key == pygame.K_RIGHT:
                     right_pressed = True
-                elif event.key == pygame.K_KP5:
+                elif event.key == pygame.K_KP5 or event.key == pygame.K_DOWN:
                     down_pressed = True
                 elif event.key == pygame.K_a:
                     a_pressed = True
@@ -578,11 +578,11 @@ def game_state():
                     escape_pressed = True
             # remove boolean if key is let go
             elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_KP4:
+                if event.key == pygame.K_KP4 or event.key == pygame.K_LEFT:
                     left_pressed = False
-                elif event.key == pygame.K_KP6:
+                elif event.key == pygame.K_KP6 or event.key == pygame.K_RIGHT:
                     right_pressed = False
-                elif event.key == pygame.K_KP5:
+                elif event.key == pygame.K_KP5 or event.key == pygame.K_DOWN:
                     down_pressed = False
                 elif event.key == pygame.K_a:
                     a_pressed = False

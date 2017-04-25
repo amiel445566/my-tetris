@@ -17,7 +17,7 @@ Rotation:
 Quick Place: (drops the current block all the way down)
 -quick place: <space>
 
-Pause: [NOT YET ADDED]
+Pause:
 -pause: <esc>
 
 Swap: (swaps the current piece for the next one) [NOT YET/WILL NOT BE ADDED?]

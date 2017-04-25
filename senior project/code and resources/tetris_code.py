@@ -519,11 +519,13 @@ def game_state():
     lines_completed_header_text = pygame.font.Font("Font(s)\Pixeled.ttf", 8)
     lines_completed_var_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
     next_header_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
+    pause_text = pygame.font.Font("Font(s)\Pixeled.ttf", 40)
         # static renders (not in loop because text is nonchanging)
     score_header_text_rendered = score_header_text.render("Score", False, white)
     timing_header_text_rendered = timing_header_text.render("Speed", False, white)
     lines_completed_header_text_rendered = lines_completed_header_text.render("Lines Completed", False, white)
     next_header_text_rendered = next_header_text.render("Next", False, white)
+    pause_text_rendered = pause_text.render("PAUSED", False, white)
 
     # reset all variables
     reset_map("all")
@@ -689,6 +691,9 @@ def game_state():
     
         if escape_count == 1: # NOTE: ADD IN QUIT HANDLING HERE AS WELL
             escape_count = 2
+            gameDisplay.fill((0  ,0  ,0  ))
+            gameDisplay.blit(pause_text_rendered, (display_width/2 - pause_text_rendered.get_rect().width/2, display_height/2 - pause_text_rendered.get_rect().height/2))
+            pygame.display.update()
             while True:
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
@@ -701,7 +706,17 @@ def game_state():
                     escape_count == 2
                     break
             clock.tick(tick_rate)
-            
+
+        if game_failure:
+            gameDisplay.fill((20 ,20 ,20 ))
+            pygame.display.update()
+            ######### TAG: PUT IN STATS HERE AS WELL AS WAIT FOR USER INPUT TO RESTART; POSSIBLY GIVE AN OPTION TO QUIT
+            while True:
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        escape_count += 1 # TAG: as of now, escape is the trigger to restart (NOTE, if menu/quit is an option, loop protocol needs to be modified in place_movement_piece)
+                if escape_count == 1:
+                    break
         
         # draw the screen
         if not game_quit and not game_failure: # only enters the draw block if the game hasn't been exited (to avoid drawing without a frame to draw in)

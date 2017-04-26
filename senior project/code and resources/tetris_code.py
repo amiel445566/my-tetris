@@ -696,7 +696,7 @@ def game_state():
         else:
             escape_count = 0
     
-        if escape_count == 1: # NOTE: ADD IN QUIT HANDLING HERE AS WELL
+        if escape_count == 1:
             escape_count = 2
             gameDisplay.fill((0  ,0  ,0  ))
             gameDisplay.blit(pause_text_rendered, (display_width/2 - pause_text_rendered.get_rect().width/2, display_height/2 - pause_text_rendered.get_rect().height/2))
@@ -715,8 +715,7 @@ def game_state():
                 if escape_count == 1:
                     escape_count == 2
                     break
-                
-            clock.tick(tick_rate)
+                clock.tick(tick_rate)
 
         if game_failure:
             # necessarily calculated text renders
@@ -746,6 +745,7 @@ def game_state():
                             escape_count += 1 # TAG: as of now, escape is the trigger to restart (NOTE, if menu/quit is an option, loop protocol needs to be modified in place_movement_piece)
                 if escape_count == 1:
                     break
+                clock.tick(tick_rate)
         
         # draw the screen
         if not game_quit and not game_failure: # only enters the draw block if the game hasn't been exited (to avoid drawing without a frame to draw in)

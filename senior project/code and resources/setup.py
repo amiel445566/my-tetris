@@ -3,7 +3,9 @@ from cx_Freeze import setup, Executable
 
 # Dependencies are automatically detected, but it might need fine tuning.
 build_exe_options = {"optimize": 2,
-                     "packages": ["dbm"]}
+                     "packages": ["dbm"],
+                     "include_files": ["image(s)", "font(s)", "db"]
+                     }
 
 setup(  name = "Tetris Code",
         version = "3.6",

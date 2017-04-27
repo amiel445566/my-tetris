@@ -723,7 +723,7 @@ def game_state():
 
         if game_failure:
             # write bests to memory/initialize memory variables
-            db = shelve.open("memory")
+            db = shelve.open("db\memory")
             if "score" not in db or db["score"] < score:
                 db["score"] = score
             if "multiplier" not in db or db["multiplier"] < timing_increase:

@@ -190,6 +190,8 @@ next_piece_tile_size = 15
 pygame.init()
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('Tetris by Amiel Iliesi 2017')
+logo = pygame.image.load('image(s)\\favicon.png')
+pygame.display.set_icon(logo)
 clock = pygame.time.Clock()
 
 ##############################################################################################

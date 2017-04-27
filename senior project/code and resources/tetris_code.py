@@ -36,6 +36,7 @@ note:   (list MAY be incomplete)
 ########################################################################################
 
 # import statements
+import shelve
 import pygame
 from math import *
 from sys import *
@@ -522,8 +523,11 @@ def game_state():
     pause_text = pygame.font.Font("Font(s)\Pixeled.ttf", 40)
     end_screen_header_text = pygame.font.Font("Font(s)\Pixeled.ttf", 30)
     end_screen_score_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
+    end_screen_highscore_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
     end_screen_speed_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
+    end_screen_topspeed_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
     end_screen_lines_completed_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
+    end_screen_most_lines_completed_text = pygame.font.Font("Font(s)\Pixeled.ttf", 15)
     end_screen_instructions_text = pygame.font.Font("Font(s)\Pixeled.ttf", 10)
         # static renders (not in loop because text is nonchanging)
     score_header_text_rendered = score_header_text.render("Score", False, white)
@@ -718,22 +722,49 @@ def game_state():
                 clock.tick(tick_rate)
 
         if game_failure:
+            # write bests to memory/initialize memory variables
+            db = shelve.open("memory")
+            if "score" not in db or db["score"] < score:
+                db["score"] = score
+            if "multiplier" not in db or db["multiplier"] < timing_increase:
+                db["multiplier"] = timing_increase
+            if "lines" not in db or db["lines"] < lines_completed:
+                db["lines"] = lines_completed
             # necessarily calculated text renders
             end_screen_score_text_rendered = end_screen_score_text.render("Score: " + str(score), False, white)
             end_screen_speed_text_rendered = end_screen_speed_text.render("Multiplier: " + str(timing_increase) + "x", False, white)
             end_screen_lines_completed_text_rendered = end_screen_lines_completed_text.render("Lines Completed: " + str(lines_completed), False, white)
+            end_screen_highscore_text_rendered = end_screen_highscore_text.render("Highscore: " + str(db["score"]), False, white)
+            end_screen_topspeed_text_rendered = end_screen_topspeed_text.render("Top Multiplier: " + str(db["multiplier"]) + "x", False, white)
+            end_screen_most_lines_completed_text_rendered = end_screen_most_lines_completed_text.render("Most Lines Completed: " + str(db["lines"]), False, white)
             # end screen displays
             gameDisplay.fill((20 ,20 ,20 ))
+            
             gameDisplay.blit(end_screen_header_text_rendered, (display_width/2 - end_screen_header_text_rendered.get_rect().width/2, 15))
-            previous_height = 15 + end_screen_header_text_rendered.get_rect().height
+            previous_height = end_screen_header_text_rendered.get_rect().height
+            
             gameDisplay.blit(end_screen_score_text_rendered, (40, previous_height + 50))
             previous_height += 50 + end_screen_score_text_rendered.get_rect().height
+            
+            gameDisplay.blit(end_screen_highscore_text_rendered, (40, previous_height))
+            previous_height += end_screen_highscore_text_rendered.get_rect().height
+            
             gameDisplay.blit(end_screen_speed_text_rendered, (40, previous_height + 20))
             previous_height += 20 + end_screen_speed_text_rendered.get_rect().height
+            
+            gameDisplay.blit(end_screen_topspeed_text_rendered, (40, previous_height))
+            previous_height += end_screen_topspeed_text_rendered.get_rect().height
+            
             gameDisplay.blit(end_screen_lines_completed_text_rendered, (40, previous_height + 20))
+            previous_height += 20 + end_screen_lines_completed_text_rendered.get_rect().height
+            
+            gameDisplay.blit(end_screen_most_lines_completed_text_rendered, (40, previous_height))
+            previous_height += end_screen_most_lines_completed_text_rendered.get_rect().height
+            
             gameDisplay.blit(end_screen_instructions_text_rendered,
                              (display_width/2 - end_screen_instructions_text_rendered.get_rect().width/2, display_height - (20 + end_screen_instructions_text_rendered.get_rect().height)))
             pygame.display.update()
+            db.close()
             # block for user input to restart
             while True and not game_quit:
                 for event in pygame.event.get():

@@ -42,6 +42,7 @@ from math import *
 from sys import *
 from copy import *
 from random import *
+import os
 
 # GLOBAL VARIABLES
 background_pattern = [
@@ -187,6 +188,7 @@ display_height = 600
 tile_size = 25 # size of each grid space
 next_piece_tile_size = 15
     # display initializations
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('Tetris by Amiel Iliesi 2017')

@@ -5,7 +5,7 @@ The blocks fall at a predetermined rate which will increase as the amount of lin
 -----------------------------------------------------------------------------------------
 Controls:
 
-Movement:
+Movement: (hold to repeat)
 -left:  <numpad 4> or <arrow_left>
 -right: <numpad 6> or <arrow_right>
 -down:  <numpad 5> or <arrow_down>

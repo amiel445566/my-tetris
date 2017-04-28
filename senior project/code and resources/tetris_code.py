@@ -605,7 +605,7 @@ def game_state():
             left_count += 1 # count used for held input repetition
             if left_count == 1:
                 move_left = True # moves if input is initially pulsed
-            elif left_count >= max(round((1/1+(timing_increase-1)/5) * 20), 10) and left_count % round((1/1+(1-timing_increase)/5) * 10) == 0:
+            elif left_count >= max(round((1/timing_increase) * 20), 5) and left_count % round((1/1+(1-timing_increase)/8) * 10) == 0:
                 move_left = True # moves if input is repeated after held time (scaled to timing increase)
             else:
                 move_left = False # fails to fall in cycle timings
@@ -618,7 +618,7 @@ def game_state():
             right_count += 1
             if right_count == 1:
                 move_right = True
-            elif right_count >= max(round((1/1+(timing_increase-1)/5) * 20), 10) and right_count % round((1/1+(1-timing_increase)/5) * 10) == 0:
+            elif right_count >= max(round((1/timing_increase) * 20), 5) and right_count % round((1/1+(1-timing_increase)/8) * 10) == 0:
                 move_right = True
             else:
                 move_right = False
@@ -632,7 +632,7 @@ def game_state():
             if down_count == 1:
                 move_down = True
                 score += round((1/timing_increase) * 10) # score is based on speed scale with base unit of 10
-            elif down_count >= max(round((1/1+(timing_increase-1)/5) * 20), 10) and down_count % round((1/1+(1-timing_increase)/5) * 10) == 0:
+            elif down_count >= max(round((1/timing_increase) * 20), 5) and down_count % round((1/1+(1-timing_increase)/8) * 10) == 0:
                 move_down = True
                 score += round((1/timing_increase) * 10)
             else:

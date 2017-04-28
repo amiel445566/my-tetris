@@ -11,4 +11,4 @@ setup(  name = "Tetris Code",
         version = "3.6",
         options = {"build_exe": build_exe_options},
         description = "My take on Tetris.",
-        executables = [Executable("tetris_code.py", base="Win32GUI")])
+        executables = [Executable("tetris_code.py", base="Win32GUI", icon="image(s)\\logo.ico")])

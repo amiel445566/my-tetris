@@ -706,8 +706,9 @@ def game_state():
     
         if escape_count == 1:
             escape_count = 2
-            gameDisplay.fill((0  ,0  ,0  ))
-            gameDisplay.blit(pause_text_rendered, (display_width/2 - pause_text_rendered.get_rect().width/2, display_height/2 - pause_text_rendered.get_rect().height/2))
+            gameDisplay.fill((0  ,0  ,0  ), pygame.Rect(left_map_width, 0, center_map_width, display_height))
+            gameDisplay.blit(pause_text_rendered, (display_width/2 - pause_text_rendered.get_rect().width/2 + 5, display_height/2 - pause_text_rendered.get_rect().height/2))
+                # 5 pixels added to the display width of the pause text to counter the whitespace of the font; visual centering
             pygame.display.update()
             while True and not game_quit:
                 for event in pygame.event.get():

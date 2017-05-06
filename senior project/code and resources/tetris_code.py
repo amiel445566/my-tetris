@@ -204,6 +204,7 @@ lines_completed_header_text = pygame.font.Font("font(s)\Pixeled.ttf", 8)
 lines_completed_var_text = pygame.font.Font("font(s)\Pixeled.ttf", 15)
 next_header_text = pygame.font.Font("font(s)\Pixeled.ttf", 15)
 pause_text = pygame.font.Font("font(s)\Pixeled.ttf", 40)
+pause_restart_text = pygame.font.Font("font(s)\PIxeled.ttf", 10)
 end_screen_header_text = pygame.font.Font("font(s)\Pixeled.ttf", 30)
 end_screen_score_text = pygame.font.Font("font(s)\Pixeled.ttf", 15)
 end_screen_highscore_text = pygame.font.Font("font(s)\Pixeled.ttf", 15)
@@ -218,6 +219,7 @@ timing_header_text_rendered = timing_header_text.render("SPEED", False, white)
 lines_completed_header_text_rendered = lines_completed_header_text.render("LINES COMPLETED", False, white)
 next_header_text_rendered = next_header_text.render("NEXT", False, white)
 pause_text_rendered = pause_text.render("PAUSED", False, white)
+pause_restart_text_rendered = pause_restart_text.render("[press R to quick replay]", False, white)
 end_screen_header_text_rendered = end_screen_header_text.render("GAME OVER", False, white)
 end_screen_instructions_text_rendered = end_screen_instructions_text.render("[press ESC to replay]", False, white)
 
@@ -525,6 +527,7 @@ def game_state():
     auto_lower = False # used to auto-lower the piece on the board
     block_placed = False # used to initiate events when block is in the placed pulse state
     game_failure = False # handles the state of the current game instance
+    quick_restart = False # skips the end screen, but treated as game failure
     tick_rate = 60 # gives the framerate of the game
         # used for held repetition
     left_count = 0
@@ -554,7 +557,7 @@ def game_state():
         place_movement_piece(current_piece, [0, 3])
 
     # begin game loop
-    while not game_failure and not game_quit:
+    while not game_failure and not game_quit and not quick_restart:
         # use auto-advancement before anything else to ensure input disable upon auto-advance
         if since_last_lower == round((1/timing_increase) * 60): # 60/timing_increase = frames till auto advance
             disable_input = True
@@ -707,8 +710,10 @@ def game_state():
         if escape_count == 1:
             escape_count = 2
             gameDisplay.fill((0  ,0  ,0  ), pygame.Rect(left_map_width, 0, center_map_width, display_height))
-            gameDisplay.blit(pause_text_rendered, (display_width/2 - pause_text_rendered.get_rect().width/2 + 5, display_height/2 - pause_text_rendered.get_rect().height/2))
                 # 5 pixels added to the display width of the pause text to counter the whitespace of the font; visual centering
+            gameDisplay.blit(pause_text_rendered, (display_width/2 - pause_text_rendered.get_rect().width/2 + 5, display_height/2 - pause_text_rendered.get_rect().height/2))
+            gameDisplay.blit(pause_restart_text_rendered, (display_width/2 - pause_restart_text_rendered.get_rect().width/2,
+                                                           display_height - (pause_restart_text_rendered.get_rect().height + 5)))
             pygame.display.update()
             while True and not game_quit:
                 for event in pygame.event.get():
@@ -718,11 +723,17 @@ def game_state():
                     elif event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
                             escape_count += 1
+                        elif event.key == pygame.K_r:
+                            quick_restart = True
                     elif event.type == pygame.KEYUP:
                         if event.key == pygame.K_ESCAPE:
                             escape_count = 0
+                        elif event.key == pygame.K_r:
+                            quick_restart = False
                 if escape_count == 1:
                     escape_count == 2
+                    break
+                elif quick_restart:
                     break
                 clock.tick(tick_rate)
 
@@ -784,7 +795,7 @@ def game_state():
                 clock.tick(tick_rate)
         
         # draw the screen
-        if not game_quit and not game_failure: # only enters the draw block if the game hasn't been exited (to avoid drawing without a frame to draw in)
+        if not game_quit and not game_failure and not quick_restart: # only enters the draw block if the game hasn't been exited (to avoid drawing without a frame to draw in)
             gameDisplay.fill((30 ,30 ,30 )) # default background color
             
             for i in range(24): # first draw the background; highlight current piece columns

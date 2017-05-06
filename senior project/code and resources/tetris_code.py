@@ -500,6 +500,7 @@ def game_state():
     d_count = 0
     space_count = 0
     escape_count = 0
+    pause_count = 0
         # used for confirmation of movement
     move_left = False
     move_right = False
@@ -521,6 +522,15 @@ def game_state():
 
     # begin game loop
     while not game_failure and not game_quit and not quick_restart:
+        
+        if block_placed == True:
+            pygame.display.update()
+            while pause_count < round(1/timing_increase * 15):
+                pause_count += 1
+                clock.tick(tick_rate)
+            pause_count = 0
+            block_placed = False
+        
         # use auto-advancement before anything else to ensure input disable upon auto-advance
         if since_last_lower == round((1/timing_increase) * 60): # 60/timing_increase = frames till auto advance
             disable_input = True
@@ -669,7 +679,7 @@ def game_state():
             escape_count += 1
         else:
             escape_count = 0
-    
+                
         if escape_count == 1:
             escape_count = 2
             gameDisplay.fill((0  ,0  ,0  ), pygame.Rect(left_map_width, 0, center_map_width, display_height))
@@ -763,7 +773,8 @@ def game_state():
             
             for i in range(24): # first draw the background; highlight current piece columns
                 for j in range(10):
-                    if len(current_piece_location) > 0 and j in range(current_piece_location[1], current_piece_location[1] + len(current_piece[0])):
+                    # block_placed for disable movement_map render for delay pause
+                    if len(current_piece_location) > 0 and j in range(current_piece_location[1], current_piece_location[1] + len(current_piece[0])) and not block_placed:
                         pygame.draw.rect(gameDisplay,
                                          color_key[background_pattern[i][j] + 2],
                                          [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
@@ -779,7 +790,7 @@ def game_state():
                                 pygame.draw.rect(gameDisplay,
                                                  color_key[placement_map[i][j]],
                                                  [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
-                        else:
+                        elif block_placed == False: # block_placed for disable movement_map render for delay pause
                             if movement_map[i][j] != 0:
                                 pygame.draw.rect(gameDisplay,
                                                  color_key[movement_map[i][j]],
@@ -872,7 +883,6 @@ def game_state():
         # update the global variables
         # < TAG: put all round delays (IE new block placement delay/line deletion delay) HERE
         since_last_lower += 1
-        block_placed = False
         clock.tick(tick_rate)
     
 while not game_quit:

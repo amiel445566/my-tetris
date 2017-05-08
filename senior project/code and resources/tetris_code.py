@@ -192,7 +192,7 @@ timing_header_text_rendered = timing_header_text.render("SPEED", False, white)
 lines_completed_header_text_rendered = lines_completed_header_text.render("LINES COMPLETED", False, white)
 next_header_text_rendered = next_header_text.render("NEXT", False, white)
 pause_text_rendered = pause_text.render("PAUSED", False, white)
-pause_restart_text_rendered = pause_restart_text.render("[press R to quick replay]", False, white)
+pause_restart_text_rendered = pause_restart_text.render("[quick [R]eplay]", False, white)
 end_screen_header_text_rendered = end_screen_header_text.render("GAME OVER", False, white)
 end_screen_replay_text_rendered = end_screen_replay_text.render("[press ESC to replay]", False, white)
 

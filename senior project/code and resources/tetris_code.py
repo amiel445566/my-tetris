@@ -143,6 +143,15 @@ since_last_lower = 0 # used to determine whether or not to automatically lower t
 game_failure = False # used by functions to determine game failure
 game_quit = False # used internally by main to handle game failure and game exiting
     # display variables
+        # a cookie-esque memory of whether or not delay was prefered
+db = shelve.open("db\memory")
+if "delay_toggle" not in db:
+    delay_toggle = False
+    db["delay_toggle"] = delay_toggle
+delay_toggle = db["delay_toggle"]
+db.close()
+
+tick_rate = 60 # gives the framerate of the game
 left_map_width = 120
 center_map_width = 250
 right_map_width = left_map_width # duplicated for semantics
@@ -167,6 +176,7 @@ lines_completed_header_text = pygame.font.Font("font(s)\Pixeled.ttf", 8)
 lines_completed_var_text = pygame.font.Font("font(s)\Pixeled.ttf", 15)
 next_header_text = pygame.font.Font("font(s)\Pixeled.ttf", 15)
 pause_text = pygame.font.Font("font(s)\Pixeled.ttf", 40)
+pause_delay_toggle_text = pygame.font.Font("font(s)\Pixeled.ttf", 10)
 pause_restart_text = pygame.font.Font("font(s)\PIxeled.ttf", 10)
 end_screen_header_text = pygame.font.Font("font(s)\Pixeled.ttf", 30)
 end_screen_score_text = pygame.font.Font("font(s)\Pixeled.ttf", 15)
@@ -175,7 +185,7 @@ end_screen_speed_text = pygame.font.Font("font(s)\Pixeled.ttf", 15)
 end_screen_topspeed_text = pygame.font.Font("font(s)\Pixeled.ttf", 15)
 end_screen_lines_completed_text = pygame.font.Font("font(s)\Pixeled.ttf", 15)
 end_screen_most_lines_completed_text = pygame.font.Font("font(s)\Pixeled.ttf", 15)
-end_screen_instructions_text = pygame.font.Font("font(s)\Pixeled.ttf", 10)
+end_screen_replay_text = pygame.font.Font("font(s)\Pixeled.ttf", 10)
     # static renders (not in game state because text is nonchanging)
 score_header_text_rendered = score_header_text.render("SCORE", False, white)
 timing_header_text_rendered = timing_header_text.render("SPEED", False, white)
@@ -184,7 +194,7 @@ next_header_text_rendered = next_header_text.render("NEXT", False, white)
 pause_text_rendered = pause_text.render("PAUSED", False, white)
 pause_restart_text_rendered = pause_restart_text.render("[press R to quick replay]", False, white)
 end_screen_header_text_rendered = end_screen_header_text.render("GAME OVER", False, white)
-end_screen_instructions_text_rendered = end_screen_instructions_text.render("[press ESC to replay]", False, white)
+end_screen_replay_text_rendered = end_screen_replay_text.render("[press ESC to replay]", False, white)
 
 ##############################################################################################
 ##################################### PIECE MODIFICATION #####################################
@@ -339,6 +349,58 @@ def test_timing():
     
 ##############################################################################################
 ################################# MAP MODIFICATION ###########################################
+def draw_pause():
+    pause_delay_toggle_text_rendered = pause_delay_toggle_text.render("[round [D]elay: " + str("ON]")*delay_toggle + str("OFF]")*(delay_toggle == False), False, white)
+    gameDisplay.fill((0  ,0  ,0  ), pygame.Rect(left_map_width, 0, center_map_width, display_height))
+    gameDisplay.blit(pause_text_rendered, (display_width/2 - pause_text_rendered.get_rect().width/2 + 5, display_height/2 - pause_text_rendered.get_rect().height/2))
+
+    previous_height = display_height - (pause_restart_text_rendered.get_rect().height + 5)
+    gameDisplay.blit(pause_restart_text_rendered, (display_width/2 - pause_restart_text_rendered.get_rect().width/2, previous_height))
+
+    previous_height = previous_height - (pause_delay_toggle_text_rendered.get_rect().height + 5)
+    gameDisplay.blit(pause_delay_toggle_text_rendered,
+                     (display_width/2 - pause_delay_toggle_text_rendered.get_rect().width/2, previous_height))
+def draw_maps(delay_mode=False):
+    """ draws the map """
+    #NOTE: delay_mode is used to display the previous changes before theyre put into effect, so alternative rendering is required
+    
+    global current_piece_location
+    
+    for i in range(24): # first draw the background; highlight current piece columns
+        for j in range(10):
+            if len(current_piece_location) > 0 and j in range(current_piece_location[1], current_piece_location[1] + len(current_piece[0])) and not delay_mode:
+                pygame.draw.rect(gameDisplay,
+                                 color_key[background_pattern[i][j] + 2],
+                                 [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
+            else:
+                pygame.draw.rect(gameDisplay,
+                                 color_key[background_pattern[i][j]],
+                                 [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
+    for i in range(24): # next draw both maps on top
+        for j in range(10):
+            for k in range(2): # k used to alternate between placement_map and movement_map
+                if k == 0:
+                    if placement_map[i][j] != 0:
+                        pygame.draw.rect(gameDisplay,
+                                         color_key[placement_map[i][j]],
+                                         [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
+                elif not delay_mode:
+                    if movement_map[i][j] != 0:
+                        pygame.draw.rect(gameDisplay,
+                                         color_key[movement_map[i][j]],
+                                         [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
+def initiate_round_delay():
+    """ when called, initiates the round delay to the
+    specified timing """
+    
+    global tick_rate
+    
+    pygame.display.update()
+    pause_count = 0
+    while pause_count < round(1/timing_increase * 15):
+        pause_count += 1
+        clock.tick(tick_rate)
+
 def confirm_placement(map_index_list):
     """ places the current piece onto the placement map """
 
@@ -346,6 +408,7 @@ def confirm_placement(map_index_list):
     global next_pieces
     global placement_map
     global since_last_lower
+    global delay_toggle
     
     if test_if_clear(current_piece, map_index_list):
         for i in range(len(current_piece)): # place piece in predetermined spot
@@ -353,6 +416,12 @@ def confirm_placement(map_index_list):
                 if current_piece[i][j] == 0:
                     continue # stops the loop from finishing to prevent 0's from placing
                 placement_map[map_index_list[0] + i][map_index_list[1] + j] = current_piece[i][j]
+
+        # delay block
+        if delay_toggle:
+            draw_maps(True)
+            initiate_round_delay()
+        
         # wipe the current turns' variables clean
         reset_variable("current_piece_location")
         current_piece = next_pieces.pop(0)
@@ -478,6 +547,8 @@ def game_state():
     global right_map_width
     global game_failure
     global game_quit
+    global tick_rate
+    global delay_toggle
     # local variables to the game instance
     left_pressed = False
     right_pressed = False
@@ -491,7 +562,6 @@ def game_state():
     block_placed = False # used to initiate events when block is in the placed pulse state
     game_failure = False # handles the state of the current game instance
     quick_restart = False # skips the end screen, but treated as game failure
-    tick_rate = 60 # gives the framerate of the game
         # used for held repetition
     left_count = 0
     right_count = 0
@@ -500,7 +570,6 @@ def game_state():
     d_count = 0
     space_count = 0
     escape_count = 0
-    pause_count = 0
         # used for confirmation of movement
     move_left = False
     move_right = False
@@ -522,14 +591,6 @@ def game_state():
 
     # begin game loop
     while not game_failure and not game_quit and not quick_restart:
-        
-        if block_placed == True:
-            pygame.display.update()
-            while pause_count < round(1/timing_increase * 15):
-                pause_count += 1
-                clock.tick(tick_rate)
-            pause_count = 0
-            block_placed = False
         
         # use auto-advancement before anything else to ensure input disable upon auto-advance
         if since_last_lower == round((1/timing_increase) * 60): # 60/timing_increase = frames till auto advance
@@ -664,7 +725,7 @@ def game_state():
             confirm_placement(current_piece_location)
             block_placed = True
               
-        if (move_left or move_right or move_down or move_cc or move_c) and not move_qp and not block_placed: # confirm movement
+        if (move_left or move_right or move_down or move_cc or move_c) and not move_qp: # confirm movement
             move_current_piece(left=move_left,
                                right=move_right,
                                down=move_down,
@@ -682,11 +743,8 @@ def game_state():
                 
         if escape_count == 1:
             escape_count = 2
-            gameDisplay.fill((0  ,0  ,0  ), pygame.Rect(left_map_width, 0, center_map_width, display_height))
                 # 5 pixels added to the display width of the pause text to counter the whitespace of the font; visual centering
-            gameDisplay.blit(pause_text_rendered, (display_width/2 - pause_text_rendered.get_rect().width/2 + 5, display_height/2 - pause_text_rendered.get_rect().height/2))
-            gameDisplay.blit(pause_restart_text_rendered, (display_width/2 - pause_restart_text_rendered.get_rect().width/2,
-                                                           display_height - (pause_restart_text_rendered.get_rect().height + 5)))
+            draw_pause()
             pygame.display.update()
             while True and not game_quit:
                 for event in pygame.event.get():
@@ -698,11 +756,22 @@ def game_state():
                             escape_count += 1
                         elif event.key == pygame.K_r:
                             quick_restart = True
+                        elif event.key == pygame.K_d:
+                            d_count += 1
+                            if d_count == 1:
+                                delay_toggle = not delay_toggle
+                                db = shelve.open("db\memory")
+                                db["delay_toggle"] = delay_toggle
+                                db.close()
+                                draw_pause()
+                                pygame.display.update()
                     elif event.type == pygame.KEYUP:
                         if event.key == pygame.K_ESCAPE:
                             escape_count = 0
                         elif event.key == pygame.K_r:
                             quick_restart = False
+                        elif event.key == pygame.K_d:
+                            d_count = 0
                 if escape_count == 1:
                     escape_count == 2
                     break
@@ -750,8 +819,8 @@ def game_state():
             gameDisplay.blit(end_screen_most_lines_completed_text_rendered, (40, previous_height))
             previous_height += end_screen_most_lines_completed_text_rendered.get_rect().height
             
-            gameDisplay.blit(end_screen_instructions_text_rendered,
-                             (display_width/2 - end_screen_instructions_text_rendered.get_rect().width/2, display_height - (20 + end_screen_instructions_text_rendered.get_rect().height)))
+            gameDisplay.blit(end_screen_replay_text_rendered,
+                             (display_width/2 - end_screen_replay_text_rendered.get_rect().width/2, display_height - (20 + end_screen_replay_text_rendered.get_rect().height)))
             pygame.display.update()
             db.close()
             # block for user input to restart
@@ -770,31 +839,9 @@ def game_state():
         # draw the screen
         if not game_quit and not game_failure and not quick_restart: # only enters the draw block if the game hasn't been exited (to avoid drawing without a frame to draw in)
             gameDisplay.fill((30 ,30 ,30 )) # default background color
+
+            draw_maps()
             
-            for i in range(24): # first draw the background; highlight current piece columns
-                for j in range(10):
-                    # block_placed for disable movement_map render for delay pause
-                    if len(current_piece_location) > 0 and j in range(current_piece_location[1], current_piece_location[1] + len(current_piece[0])) and not block_placed:
-                        pygame.draw.rect(gameDisplay,
-                                         color_key[background_pattern[i][j] + 2],
-                                         [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
-                    else:
-                        pygame.draw.rect(gameDisplay,
-                                         color_key[background_pattern[i][j]],
-                                         [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
-            for i in range(24): # next draw both maps on top
-                for j in range(10):
-                    for k in range(2): # k used to alternate between placement_map and movement_map
-                        if k == 0:
-                            if placement_map[i][j] != 0:
-                                pygame.draw.rect(gameDisplay,
-                                                 color_key[placement_map[i][j]],
-                                                 [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
-                        elif block_placed == False: # block_placed for disable movement_map render for delay pause
-                            if movement_map[i][j] != 0:
-                                pygame.draw.rect(gameDisplay,
-                                                 color_key[movement_map[i][j]],
-                                                 [j * tile_size + left_map_width, i * tile_size, tile_size, tile_size])
             # left side (next piece displays)
             np_amt = 3
             np_w = 6

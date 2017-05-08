@@ -846,64 +846,37 @@ def game_state():
             np_amt = 3
             np_w = 6
             np_h = 6
-            
+
+            gameDisplay.blit(next_header_text_rendered, (left_map_width/2 - next_header_text_rendered.get_rect().width/2, 5))
+            previous_height = next_header_text_rendered.get_rect().height + 5
             for i in range(np_amt):
                 for j in range(np_h):
                     for k in range(np_w):
-                        if len(next_pieces[::-1][i][0]) == 2 and (j-2 in range(2) and k-2 in range(2)) and next_pieces[::-1][i][j - 2][k - 2] != 0:
-                            if i is not max(range(np_amt)):
-                                pygame.draw.rect(gameDisplay,
-                                                 color_key[next_pieces[::-1][i][j-2][k-2]],
-                                                 [(k + 1) * next_piece_tile_size,
-                                                  ((j + 1) + i * 7) * next_piece_tile_size,
-                                                  next_piece_tile_size, next_piece_tile_size])
-                            else:
-                                pygame.draw.rect(gameDisplay,
-                                                 color_key[next_pieces[::-1][i][j-2][k-2]],
-                                                 [(k + 1) * next_piece_tile_size,
-                                                  ((j + 1) + i * 7 + 2) * next_piece_tile_size,
-                                                  next_piece_tile_size, next_piece_tile_size])
-                        elif len(next_pieces[::-1][i][0]) == 3 and (j-2 in range(2) and k-1 in range(3)) and next_pieces[::-1][i][j - 2][k - 1] != 0:
-                            if i is not max(range(np_amt)):
-                                pygame.draw.rect(gameDisplay,
-                                                 color_key[next_pieces[::-1][i][j-2][k-1]],
-                                                 [(k + 1) * next_piece_tile_size,
-                                                  ((j + 1) + i * 7) * next_piece_tile_size,
-                                                  next_piece_tile_size, next_piece_tile_size])
-                            else:
-                                pygame.draw.rect(gameDisplay,
-                                                 color_key[next_pieces[::-1][i][j-2][k-1]],
-                                                 [(k + 1) * next_piece_tile_size,
-                                                  ((j + 1) + i * 7 + 2) * next_piece_tile_size,
-                                                  next_piece_tile_size, next_piece_tile_size])
-                        elif len(next_pieces[::-1][i][0]) == 4 and (j-2 in range(1) and k-1 in range(4)) and next_pieces[::-1][i][j - 2][k - 1] != 0:
-                            if i is not max(range(np_amt)):
-                                pygame.draw.rect(gameDisplay,
-                                                     color_key[next_pieces[::-1][i][j-2][k-1]],
-                                                     [(k + 1) * next_piece_tile_size,
-                                                      ((j + 1) + i * 7) * next_piece_tile_size,
-                                                      next_piece_tile_size, next_piece_tile_size])
-                            else:
-                                pygame.draw.rect(gameDisplay,
-                                             color_key[next_pieces[::-1][i][j-2][k-1]],
+                        if len(next_pieces[i][0]) == 2 and (j-2 in range(2) and k-2 in range(2)) and next_pieces[i][j - 2][k - 2] != 0:
+                            pygame.draw.rect(gameDisplay,
+                                             color_key[next_pieces[i][j-2][k-2]],
                                              [(k + 1) * next_piece_tile_size,
-                                              ((j + 1) + i * 7 + 2) * next_piece_tile_size,
+                                              (j + i * 7) * next_piece_tile_size + previous_height,
                                               next_piece_tile_size, next_piece_tile_size])
+                        elif len(next_pieces[i][0]) == 3 and (j-2 in range(2) and k-1 in range(3)) and next_pieces[i][j - 2][k - 1] != 0:
+                            pygame.draw.rect(gameDisplay,
+                                             color_key[next_pieces[i][j-2][k-1]],
+                                             [(k + 1) * next_piece_tile_size,
+                                              (j + i * 7) * next_piece_tile_size + previous_height,
+                                              next_piece_tile_size, next_piece_tile_size])
+                        elif len(next_pieces[i][0]) == 4 and (j-2 in range(1) and k-1 in range(4)) and next_pieces[i][j - 2][k - 1] != 0:
+                            pygame.draw.rect(gameDisplay,
+                                                 color_key[next_pieces[i][j-2][k-1]],
+                                                 [(k + 1) * next_piece_tile_size,
+                                                  (j + i * 7) * next_piece_tile_size + previous_height,
+                                                  next_piece_tile_size, next_piece_tile_size])
                         else:
-                            if i is not max(range(np_amt)):
-                                pygame.draw.rect(gameDisplay,
-                                                     color_key[next_pieces_background_pattern[j][k]],
-                                                     [(k + 1) * next_piece_tile_size,
-                                                      ((j + 1) + i * 7) * next_piece_tile_size,
-                                                      next_piece_tile_size, next_piece_tile_size])
-                            else:
-                                pygame.draw.rect(gameDisplay,
+                            pygame.draw.rect(gameDisplay,
                                                  color_key[next_pieces_background_pattern[j][k]],
                                                  [(k + 1) * next_piece_tile_size,
-                                                  ((j + 1) + i * 7 + 2) * next_piece_tile_size,
+                                                  (j + i * 7) * next_piece_tile_size + previous_height,
                                                   next_piece_tile_size, next_piece_tile_size])
                                 
-            gameDisplay.blit(next_header_text_rendered, (left_map_width/2 - next_header_text_rendered.get_rect().width/2, 225))
             # right side (text displays)
                 # map constants
             right_starting_width = left_map_width + center_map_width

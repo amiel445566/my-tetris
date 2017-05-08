@@ -397,7 +397,7 @@ def initiate_round_delay():
     
     pygame.display.update()
     pause_count = 0
-    while pause_count < round(1/timing_increase * 15):
+    while pause_count < round(1/timing_increase * 30):
         pause_count += 1
         clock.tick(tick_rate)
 

@@ -431,9 +431,9 @@ def confirm_placement(map_index_list):
 
         # place next piece; avoids conflicts/logical latency with the display
         if len(current_piece[0]) == 2:
-            place_movement_piece(current_piece, [0, 4])
+            place_movement_piece(current_piece, [0, 4], True)
         else:
-            place_movement_piece(current_piece, [0, 3])
+            place_movement_piece(current_piece, [0, 3], True)
     else: # PLACE CODE FOR FAILURE HERE, EG place piece if the main loop is blocked when placing below
         print("else block reached in confirm_placement") # FOR DEBUG, REMOVE LATER
 
@@ -721,11 +721,11 @@ def game_state():
         elif not down_pressed: # don't default to move_down false if down being pressed; don't override user inputs
             move_down = False
         
-        if move_down and not test_if_clear(current_piece, (current_piece_location[0] + 1, current_piece_location[1])): # block for placing low blocks
+        if move_down and not test_if_clear(current_piece, [current_piece_location[0] + 1, current_piece_location[1]]): # block for placing low blocks
             confirm_placement(current_piece_location)
             block_placed = True
               
-        if (move_left or move_right or move_down or move_cc or move_c) and not move_qp: # confirm movement
+        if (move_left or move_right or move_down or move_cc or move_c) and not move_qp and not block_placed: # confirm movement
             move_current_piece(left=move_left,
                                right=move_right,
                                down=move_down,
@@ -928,7 +928,7 @@ def game_state():
             pygame.display.update()
 
         # update the global variables
-        # < TAG: put all round delays (IE new block placement delay/line deletion delay) HERE
+        block_placed = False
         since_last_lower += 1
         clock.tick(tick_rate)
     

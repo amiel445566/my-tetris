@@ -192,7 +192,7 @@ timing_header_text_rendered = timing_header_text.render("SPEED", False, white)
 lines_completed_header_text_rendered = lines_completed_header_text.render("LINES COMPLETED", False, white)
 next_header_text_rendered = next_header_text.render("NEXT", False, white)
 pause_text_rendered = pause_text.render("PAUSED", False, white)
-pause_restart_text_rendered = pause_restart_text.render("[quick [R]eplay]", False, white)
+pause_restart_text_rendered = pause_restart_text.render("-[R] QUICK REPLAY-", False, white)
 end_screen_header_text_rendered = end_screen_header_text.render("GAME OVER", False, white)
 end_screen_replay_text_rendered = end_screen_replay_text.render("[press ESC to replay]", False, white)
 
@@ -350,7 +350,7 @@ def test_timing():
 ##############################################################################################
 ################################# MAP MODIFICATION ###########################################
 def draw_pause():
-    pause_delay_toggle_text_rendered = pause_delay_toggle_text.render("[round [D]elay: " + str("ON]")*delay_toggle + str("OFF]")*(delay_toggle == False), False, white)
+    pause_delay_toggle_text_rendered = pause_delay_toggle_text.render("-[D] ROUND DELAY: " + str("ON-")*delay_toggle + str("OFF-")*(delay_toggle == False), False, white)
     gameDisplay.fill((0  ,0  ,0  ), pygame.Rect(left_map_width, 0, center_map_width, display_height))
     gameDisplay.blit(pause_text_rendered, (display_width/2 - pause_text_rendered.get_rect().width/2 + 5, display_height/2 - pause_text_rendered.get_rect().height/2))
 

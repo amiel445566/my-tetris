@@ -194,7 +194,7 @@ next_header_text_rendered = next_header_text.render("NEXT", False, white)
 pause_text_rendered = pause_text.render("PAUSED", False, white)
 pause_restart_text_rendered = pause_restart_text.render("-[R] QUICK REPLAY-", False, white)
 end_screen_header_text_rendered = end_screen_header_text.render("GAME OVER", False, white)
-end_screen_replay_text_rendered = end_screen_replay_text.render("[press ESC to replay]", False, white)
+end_screen_replay_text_rendered = end_screen_replay_text.render("-[ESC] replay-", False, white)
 
 ##############################################################################################
 ##################################### PIECE MODIFICATION #####################################

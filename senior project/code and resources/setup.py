@@ -4,7 +4,7 @@ from cx_Freeze import setup, Executable
 # Dependencies are automatically detected, but it might need fine tuning.
 build_exe_options = {"optimize": 2,
                      "packages": ["dbm"],
-                     "include_files": ["image(s)", "font(s)", "db", "README"],
+                     "include_files": ["image(s)", "font(s)", "db", "README.txt"],
                      "excludes": ["email", "html", "http", "lib2to3", "logging",
                                   "multiprocessing", "unittest", "urllib", "xml",
                                   "xmlrpc"]

@@ -48,9 +48,6 @@ Amiel Iliesi
 Fonts Used:
 Pixeled: http://www.dafont.com/pixeled.font; by OmegaPC777
 
-Music By:
-N/A
-
 EXE Packaging:
 CX_Freeze
 
